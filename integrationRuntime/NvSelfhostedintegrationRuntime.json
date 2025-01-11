@@ -1,0 +1,6 @@
+{
+	"name": "NvSelfhostedintegrationRuntime",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
