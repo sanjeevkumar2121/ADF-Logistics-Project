@@ -1,0 +1,21 @@
+{
+	"name": "GeographyParquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DestinationAzureBlobStorageLinkService",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "GeographParquetTable",
+				"container": "destination"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

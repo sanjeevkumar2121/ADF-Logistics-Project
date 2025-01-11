@@ -1,0 +1,22 @@
+{
+	"name": "LogisticsParquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DestinationAzureBlobStorageLinkService",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "json_logistics",
+				"folderPath": "LogisticsParquettable",
+				"container": "destination"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

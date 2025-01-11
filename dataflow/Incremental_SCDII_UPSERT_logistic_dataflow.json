@@ -1,0 +1,150 @@
+{
+	"name": "Incremental_SCDII_UPSERT_logistic_dataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "backend_dataset",
+						"type": "DatasetReference"
+					},
+					"name": "backenddatasource"
+				},
+				{
+					"dataset": {
+						"referenceName": "LogisticsParquet",
+						"type": "DatasetReference"
+					},
+					"name": "lookupdestination"
+				},
+				{
+					"dataset": {
+						"referenceName": "LogisticsParquet",
+						"type": "DatasetReference"
+					},
+					"name": "olddatasource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "UpsertRecordsLogisticParquet",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "WatermarkColumn"
+				},
+				{
+					"name": "union1"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "filter2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          SHIPMENTNO as string,",
+				"          TRANSPORTERCODE as string,",
+				"          TRANSPORTERNAME as string,",
+				"          MODEOFTRANSPORT as string,",
+				"          MEANSOFTRANSPORT_TYPE as string,",
+				"          PRIMARY_FREIGHT as string,",
+				"          SECONDARY_FREIGHT as string,",
+				"          TOTAL_FREIGHT as string,",
+				"          LORRYORTRUCKNO as string,",
+				"          TRUCKTYPEHU as string,",
+				"          TRUCKTYPEDESCHU as string,",
+				"          BILLINGDOCUMENT as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> backenddatasource",
+				"source(output(",
+				"          SHIPMENTNO as string,",
+				"          TRANSPORTERCODE as string,",
+				"          TRANSPORTERNAME as string,",
+				"          MODEOFTRANSPORT as string,",
+				"          MEANSOFTRANSPORT_TYPE as string,",
+				"          PRIMARY_FREIGHT as string,",
+				"          SECONDARY_FREIGHT as string,",
+				"          TOTAL_FREIGHT as string,",
+				"          LORRYORTRUCKNO as string,",
+				"          TRUCKTYPEHU as string,",
+				"          TRUCKTYPEDESCHU as string,",
+				"          BILLINGDOCUMENT as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet',",
+				"     partitionBy('hash', 1)) ~> lookupdestination",
+				"source(output(",
+				"          SHIPMENTNO as string,",
+				"          TRANSPORTERCODE as string,",
+				"          TRANSPORTERNAME as string,",
+				"          MODEOFTRANSPORT as string,",
+				"          MEANSOFTRANSPORT_TYPE as string,",
+				"          PRIMARY_FREIGHT as string,",
+				"          SECONDARY_FREIGHT as string,",
+				"          TOTAL_FREIGHT as string,",
+				"          LORRYORTRUCKNO as string,",
+				"          TRUCKTYPEHU as string,",
+				"          TRUCKTYPEDESCHU as string,",
+				"          BILLINGDOCUMENT as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> olddatasource",
+				"lookupdestination, backenddatasource join(lookupdestination@BILLINGDOCUMENT == backenddatasource@BILLINGDOCUMENT,",
+				"     joinType:'outer',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 derive(Watermark = iif(isNull(lookupdestination@BILLINGDOCUMENT), 'New', iif((backenddatasource@TRANSPORTERNAME != lookupdestination@TRANSPORTERNAME),\"Updatedrecords\",\"Unchange\"))) ~> WatermarkColumn",
+				"olddatasource, select1 union(byName: true)~> union1",
+				"WatermarkColumn filter((Watermark == 'New') || (Watermark == 'Updatedrecords')) ~> filter1",
+				"filter1 select(mapColumn(",
+				"          SHIPMENTNO = backenddatasource@SHIPMENTNO,",
+				"          TRANSPORTERCODE = backenddatasource@TRANSPORTERCODE,",
+				"          TRANSPORTERNAME = backenddatasource@TRANSPORTERNAME,",
+				"          MODEOFTRANSPORT = backenddatasource@MODEOFTRANSPORT,",
+				"          MEANSOFTRANSPORT_TYPE = backenddatasource@MEANSOFTRANSPORT_TYPE,",
+				"          PRIMARY_FREIGHT = backenddatasource@PRIMARY_FREIGHT,",
+				"          SECONDARY_FREIGHT = backenddatasource@SECONDARY_FREIGHT,",
+				"          TOTAL_FREIGHT = backenddatasource@TOTAL_FREIGHT,",
+				"          LORRYORTRUCKNO = backenddatasource@LORRYORTRUCKNO,",
+				"          TRUCKTYPEHU = backenddatasource@TRUCKTYPEHU,",
+				"          TRUCKTYPEDESCHU = backenddatasource@TRUCKTYPEDESCHU,",
+				"          BILLINGDOCUMENT = backenddatasource@BILLINGDOCUMENT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: false) ~> select1",
+				"union1 filter(BILLINGDOCUMENT == 4451300142L || BILLINGDOCUMENT == 4447405568L) ~> filter2",
+				"filter2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     truncate: true,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

@@ -1,0 +1,21 @@
+{
+	"name": "UpsertRecordsLogisticParquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "BronzeAzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "UpsertLogistic",
+				"fileSystem": "silverdata"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,21 @@
+{
+	"name": "SalesOrganizationParquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RawlAzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "SalesOrganizationTable",
+				"container": "destination"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

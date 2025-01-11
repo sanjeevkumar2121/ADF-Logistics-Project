@@ -1,0 +1,53 @@
+{
+	"name": "Product_to_DB",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ProductParquet",
+						"type": "DatasetReference"
+					},
+					"name": "productsource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ProductAzureSqlTable",
+						"type": "DatasetReference"
+					},
+					"name": "dbsink"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          MATERIALNUMBER as string,",
+				"          MATERIAL_DESCRIPTION as string,",
+				"          PRODUCT_SALES_TEAM as string,",
+				"          PRODUCT_MFG_TEAM as string,",
+				"          MANUFACTURING_PLANT as integer,",
+				"          ACTUAL_MFG_PLANT as integer,",
+				"          BILLINGDOCUMENT as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet',",
+				"     partitionBy('hash', 1)) ~> productsource",
+				"productsource sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> dbsink"
+			]
+		}
+	}
+}

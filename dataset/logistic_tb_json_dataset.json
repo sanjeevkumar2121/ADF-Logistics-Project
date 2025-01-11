@@ -1,0 +1,61 @@
+{
+	"name": "logistic_tb_json_dataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "BronzeAzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Logisticdata.json",
+				"folderPath": "logiscticsdata",
+				"fileSystem": "backenddata"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"SHIPMENTNO": {
+					"type": "string"
+				},
+				"TRANSPORTERCODE": {
+					"type": "string"
+				},
+				"TRANSPORTERNAME": {
+					"type": "string"
+				},
+				"MODEOFTRANSPORT": {
+					"type": "string"
+				},
+				"MEANSOFTRANSPORT_TYPE": {
+					"type": "string"
+				},
+				"PRIMARY_FREIGHT": {
+					"type": "string"
+				},
+				"SECONDARY_FREIGHT": {
+					"type": "string"
+				},
+				"TOTAL_FREIGHT": {
+					"type": "string"
+				},
+				"LORRYORTRUCKNO": {
+					"type": "string"
+				},
+				"TRUCKTYPEHU": {
+					"type": "string"
+				},
+				"TRUCKTYPEDESCHU": {
+					"type": "string"
+				},
+				"BILLINGDOCUMENT": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

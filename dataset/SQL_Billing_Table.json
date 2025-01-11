@@ -1,0 +1,17 @@
+{
+	"name": "SQL_Billing_Table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Logistics_db_link_service",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Billing"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

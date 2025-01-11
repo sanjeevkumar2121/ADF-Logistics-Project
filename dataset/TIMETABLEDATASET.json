@@ -1,0 +1,1005 @@
+{
+	"name": "TIMETABLEDATASET",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RawlAzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "TB_DST_LOGISTICS_202410161746.csv",
+				"container": "rawinput"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "REPORT_FLAG",
+				"type": "String"
+			},
+			{
+				"name": "COMPANY_REGION_CLUBBED",
+				"type": "String"
+			},
+			{
+				"name": "COMPANY_REGION_CLUBBED_2",
+				"type": "String"
+			},
+			{
+				"name": "COMPANY_REGION_CLUBBED_3",
+				"type": "String"
+			},
+			{
+				"name": "COMPANY_REGION_CLUBBED_4",
+				"type": "String"
+			},
+			{
+				"name": "SALES_ORGANISATION",
+				"type": "String"
+			},
+			{
+				"name": "DIVISIONCODE",
+				"type": "String"
+			},
+			{
+				"name": "DISTRIBUTIONCHANNEL",
+				"type": "String"
+			},
+			{
+				"name": "SALES_TYPE",
+				"type": "String"
+			},
+			{
+				"name": "SALES_TYPE_2",
+				"type": "String"
+			},
+			{
+				"name": "SALES_TYPE_5",
+				"type": "String"
+			},
+			{
+				"name": "BILLINGDOCUMENT",
+				"type": "String"
+			},
+			{
+				"name": "SHIPMENTNO",
+				"type": "String"
+			},
+			{
+				"name": "DELIVERY_NO",
+				"type": "String"
+			},
+			{
+				"name": "SONUMBER",
+				"type": "String"
+			},
+			{
+				"name": "ORDERQUANTITY",
+				"type": "String"
+			},
+			{
+				"name": "CANCELLEDINVOICENO",
+				"type": "String"
+			},
+			{
+				"name": "DOCUMENT_CATEGORY",
+				"type": "String"
+			},
+			{
+				"name": "BILLINGTYPE",
+				"type": "String"
+			},
+			{
+				"name": "SALES_FLAG",
+				"type": "String"
+			},
+			{
+				"name": "QUANTITY_ZERO_FLAG",
+				"type": "String"
+			},
+			{
+				"name": "EWAYBILLNO",
+				"type": "String"
+			},
+			{
+				"name": "EWAYDATE",
+				"type": "String"
+			},
+			{
+				"name": "INVOICEDQUANTITY",
+				"type": "String"
+			},
+			{
+				"name": "NETWR_VFKP",
+				"type": "String"
+			},
+			{
+				"name": "MRP_RS_BAG",
+				"type": "String"
+			},
+			{
+				"name": "GROSS_BILL_PRICE",
+				"type": "String"
+			},
+			{
+				"name": "INVOICE_PD",
+				"type": "String"
+			},
+			{
+				"name": "MANUAL_PD",
+				"type": "String"
+			},
+			{
+				"name": "NET_BILL_PRICE",
+				"type": "String"
+			},
+			{
+				"name": "SGST",
+				"type": "String"
+			},
+			{
+				"name": "CGST",
+				"type": "String"
+			},
+			{
+				"name": "IGST",
+				"type": "String"
+			},
+			{
+				"name": "TOTAL_TAX",
+				"type": "String"
+			},
+			{
+				"name": "PRIMARY_FREIGHT",
+				"type": "String"
+			},
+			{
+				"name": "MANUAL_FREIGHT",
+				"type": "String"
+			},
+			{
+				"name": "TOTAL_PRIMARY_FREIGHT",
+				"type": "String"
+			},
+			{
+				"name": "PRIMARY_FREIGHT_2",
+				"type": "String"
+			},
+			{
+				"name": "SECONDARY_FREIGHT",
+				"type": "String"
+			},
+			{
+				"name": "TOTAL_FREIGHT",
+				"type": "String"
+			},
+			{
+				"name": "HANDLING_CHARGE",
+				"type": "String"
+			},
+			{
+				"name": "GODOWN_RENT",
+				"type": "String"
+			},
+			{
+				"name": "BRANCH_EXPENSES_MANUAL",
+				"type": "String"
+			},
+			{
+				"name": "TDC",
+				"type": "String"
+			},
+			{
+				"name": "TOTAL_DISCOUNT",
+				"type": "String"
+			},
+			{
+				"name": "TOTAL_COMMISION",
+				"type": "String"
+			},
+			{
+				"name": "TOTAL_DISCOUNT_COMMISION",
+				"type": "String"
+			},
+			{
+				"name": "CLINKER_PERCENTAGE",
+				"type": "String"
+			},
+			{
+				"name": "TOTAL_CLINKER_FREIGHT",
+				"type": "String"
+			},
+			{
+				"name": "PACKING_CHARGES",
+				"type": "String"
+			},
+			{
+				"name": "OTHER_MANUAL_ADJUSTMENT",
+				"type": "String"
+			},
+			{
+				"name": "NCR_WITHOUT_SUBSIDY",
+				"type": "String"
+			},
+			{
+				"name": "TOTAL_REMISSION",
+				"type": "String"
+			},
+			{
+				"name": "FINAL_NCR",
+				"type": "String"
+			},
+			{
+				"name": "TOTAL_CASH_REMMISSION",
+				"type": "String"
+			},
+			{
+				"name": "NET_BILL_PRICE_WITH_GD_IMPACT",
+				"type": "String"
+			},
+			{
+				"name": "PF_DIST",
+				"type": "String"
+			},
+			{
+				"name": "SF_DIST",
+				"type": "String"
+			},
+			{
+				"name": "ORDER_PLATFORM",
+				"type": "String"
+			},
+			{
+				"name": "PONUMBER",
+				"type": "String"
+			},
+			{
+				"name": "PO_DATE",
+				"type": "String"
+			},
+			{
+				"name": "REPORT_DATE",
+				"type": "String"
+			},
+			{
+				"name": "WEEK_NO",
+				"type": "String"
+			},
+			{
+				"name": "BILLINGDATE_TIMESTAMP",
+				"type": "String"
+			},
+			{
+				"name": "BILLINGDATE",
+				"type": "String"
+			},
+			{
+				"name": "SODATE",
+				"type": "String"
+			},
+			{
+				"name": "DO_RELEASE_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "SCHEDULE_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "SO_RELEASE_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "DELIVERY_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "TRANS_TAGG_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "SHIP_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "PKGCALL_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "YARD_IN_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "YARD_OUT_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "SECURITY_IN_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "TARE_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "ACTUAL_LOAD_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "GROSS_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "BILLING_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "SECURITY_OUT_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "TAT",
+				"type": "String"
+			},
+			{
+				"name": "SO_DO_TIME",
+				"type": "String"
+			},
+			{
+				"name": "DO_SHIP_TIME",
+				"type": "String"
+			},
+			{
+				"name": "DO_TRANS_TAGG_TIME",
+				"type": "String"
+			},
+			{
+				"name": "TRANS_TAGG_SHIP_TIME",
+				"type": "String"
+			},
+			{
+				"name": "SHIP_PH_CALL_TIME",
+				"type": "String"
+			},
+			{
+				"name": "PH_SEC_CALL_TIME",
+				"type": "String"
+			},
+			{
+				"name": "SEC_TARE_CALL_TIME",
+				"type": "String"
+			},
+			{
+				"name": "TW_LOAD_TIME",
+				"type": "String"
+			},
+			{
+				"name": "LOAD_GW_TIME",
+				"type": "String"
+			},
+			{
+				"name": "GW_INV_TIME",
+				"type": "String"
+			},
+			{
+				"name": "INV_GO_TIME",
+				"type": "String"
+			},
+			{
+				"name": "SLA_DATE_TIME",
+				"type": "String"
+			},
+			{
+				"name": "INCOTERMS1",
+				"type": "String"
+			},
+			{
+				"name": "STATE_CODE_TRANSACTION",
+				"type": "String"
+			},
+			{
+				"name": "RATE_CODE",
+				"type": "String"
+			},
+			{
+				"name": "RATE_CODE_DESC",
+				"type": "String"
+			},
+			{
+				"name": "TZONE",
+				"type": "String"
+			},
+			{
+				"name": "TZONE_DESC",
+				"type": "String"
+			},
+			{
+				"name": "MATERIALNUMBER",
+				"type": "String"
+			},
+			{
+				"name": "MATERIAL_DESCRIPTION",
+				"type": "String"
+			},
+			{
+				"name": "MATERIAL_SUBTYPE_MKT",
+				"type": "String"
+			},
+			{
+				"name": "BAG_TYPE_ACTUAL",
+				"type": "String"
+			},
+			{
+				"name": "PRODUCT_SALES_TEAM",
+				"type": "String"
+			},
+			{
+				"name": "PRODUCT_MFG_TEAM",
+				"type": "String"
+			},
+			{
+				"name": "MATNR_BRAND",
+				"type": "String"
+			},
+			{
+				"name": "BLENDED_NONBLENDED",
+				"type": "String"
+			},
+			{
+				"name": "BAG_LOOSE",
+				"type": "String"
+			},
+			{
+				"name": "MANUFACTURING_PLANT",
+				"type": "String"
+			},
+			{
+				"name": "ACTUAL_MFG_PLANT",
+				"type": "String"
+			},
+			{
+				"name": "PLANTCODE",
+				"type": "String"
+			},
+			{
+				"name": "PLANTDESC",
+				"type": "String"
+			},
+			{
+				"name": "PLANT_TYPE_2",
+				"type": "String"
+			},
+			{
+				"name": "PLANT_DEPOT_TYPE",
+				"type": "String"
+			},
+			{
+				"name": "PLANT_CODE_CLUBBED",
+				"type": "String"
+			},
+			{
+				"name": "PLANT_NAME_CLUBBED",
+				"type": "String"
+			},
+			{
+				"name": "PLANT_STATE_CODE",
+				"type": "String"
+			},
+			{
+				"name": "PLANT_STATE_NAME",
+				"type": "String"
+			},
+			{
+				"name": "PLANT_SUB_STATE",
+				"type": "String"
+			},
+			{
+				"name": "DEPODIRECT",
+				"type": "String"
+			},
+			{
+				"name": "DEPODIRECT_2",
+				"type": "String"
+			},
+			{
+				"name": "ROUTE",
+				"type": "String"
+			},
+			{
+				"name": "ROUTEDESC",
+				"type": "String"
+			},
+			{
+				"name": "TRANSPORTERCODE",
+				"type": "String"
+			},
+			{
+				"name": "TRANSPORTERNAME",
+				"type": "String"
+			},
+			{
+				"name": "DRIVERNAME",
+				"type": "String"
+			},
+			{
+				"name": "MOBILENO_DRIVER",
+				"type": "String"
+			},
+			{
+				"name": "LORRYORTRUCKNO",
+				"type": "String"
+			},
+			{
+				"name": "TRUCKTYPEHU",
+				"type": "String"
+			},
+			{
+				"name": "TRUCKTYPEDESCHU",
+				"type": "String"
+			},
+			{
+				"name": "SHIPMENTTYPE",
+				"type": "String"
+			},
+			{
+				"name": "SHIPPINGTYPE",
+				"type": "String"
+			},
+			{
+				"name": "CHARG",
+				"type": "String"
+			},
+			{
+				"name": "BATCHSOURCE",
+				"type": "String"
+			},
+			{
+				"name": "BATCHNUMBER",
+				"type": "String"
+			},
+			{
+				"name": "MODEOFTRANSPORT",
+				"type": "String"
+			},
+			{
+				"name": "MEANSOFTRANSPORT_TYPE",
+				"type": "String"
+			},
+			{
+				"name": "STOLOC",
+				"type": "String"
+			},
+			{
+				"name": "DAMAGE_FLAG",
+				"type": "String"
+			},
+			{
+				"name": "DAMAGE_FLAG_2",
+				"type": "String"
+			},
+			{
+				"name": "TRIPID",
+				"type": "String"
+			},
+			{
+				"name": "SHIFT",
+				"type": "String"
+			},
+			{
+				"name": "SO_CODE_TRANSACTION",
+				"type": "String"
+			},
+			{
+				"name": "SO_NAME_TRANSACTION",
+				"type": "String"
+			},
+			{
+				"name": "ASM_CODE_TRANSACTION",
+				"type": "String"
+			},
+			{
+				"name": "ASM_NAME_TRANSACTION",
+				"type": "String"
+			},
+			{
+				"name": "RSM_CODE_TRANSACTION",
+				"type": "String"
+			},
+			{
+				"name": "RSM_NAME_TRANSACTION",
+				"type": "String"
+			},
+			{
+				"name": "ZSM_CODE_TRANSACTION",
+				"type": "String"
+			},
+			{
+				"name": "ZSM_NAME_TRANSACTION",
+				"type": "String"
+			},
+			{
+				"name": "RSD_CODE_TRANSACTION",
+				"type": "String"
+			},
+			{
+				"name": "RSD_NAME_TRANSACTION",
+				"type": "String"
+			},
+			{
+				"name": "Z6_CODE_TRANSACTION",
+				"type": "String"
+			},
+			{
+				"name": "Z6_NAME_TRANSACTION",
+				"type": "String"
+			},
+			{
+				"name": "SOLDTOPARTYCODE",
+				"type": "String"
+			},
+			{
+				"name": "SOLDTOPARTYNAME",
+				"type": "String"
+			},
+			{
+				"name": "STATE_CODE_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "STATE_NAME_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "CITY_CODE_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "CITY_NAME_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "COUNTY_CODE_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "COUNTY_NAME_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "SALES_TERRITORY_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "TALUKA_CODE_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "TZONE_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "TZONE_NAME_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "LONGITUDE_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "LATITUDE_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "BP_TYPE_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "BP_DESCRIPTION_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "RATE_CODE_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "RATE_CODE_DESC_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_GRP1_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_GRP1_DESC_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_GRP2_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_GROUP_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_GROUP_GOVT_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_ACCOUNT_GROUP_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "SO_CODE_MASTER_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "SO_NAME_MASTER_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "ASM_CODE_MASTER_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "ASM_NAME_MASTER_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "RSM_CODE_MASTER_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "RSM_NAME_MASTER_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "ZSM_CODE_MASTER_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "ZSM_NAME_MASTER_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "RSD_CODE_MASTER_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "RSD_NAME_MASTER_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "Z6_CODE_MASTER_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "Z6_NAME_MASTER_SOLDTO",
+				"type": "String"
+			},
+			{
+				"name": "SHIPTOPARTYCODE",
+				"type": "String"
+			},
+			{
+				"name": "SHIPTOPARTYNAME",
+				"type": "String"
+			},
+			{
+				"name": "Z6_CODE_MASTER_SHIPTO",
+				"type": "String"
+			},
+			{
+				"name": "Z6_NAME_MASTER_SHIPTO",
+				"type": "String"
+			},
+			{
+				"name": "UNLOADINGPOINTCODE",
+				"type": "String"
+			},
+			{
+				"name": "UNLOADINGPOINTNAME",
+				"type": "String"
+			},
+			{
+				"name": "STATE_CODE_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "STATE_NAME_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "CITY_CODE_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "CITY_NAME_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "COUNTY_CODE_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "COUNTY_NAME_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "SALES_TERRITORY_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "TALUKA_CODE_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "TZONE_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "TZONE_NAME_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "LONGITUDE_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "LATITUDE_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "BP_TYPE_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "BP_DESCRIPTION_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "RATE_CODE_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "RATE_CODE_DESC_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_GRP1_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_GRP1_DESC_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_GRP2_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_GROUP_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_ACCOUNT_GROUP_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "SO_CODE_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "SO_NAME_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "ASM_CODE_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "ASM_NAME_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "RSM_CODE_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "RSM_NAME_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "RSM_EMAIL_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "ZSM_CODE_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "ZSM_NAME_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "ZSM_EMAIL_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "RSD_CODE_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "RSD_NAME_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "Z6_CODE_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "Z6_NAME_MASTER_UNLOADINGPOINT",
+				"type": "String"
+			},
+			{
+				"name": "KEY_NONKEY_1",
+				"type": "String"
+			},
+			{
+				"name": "KEY_NONKEY_2",
+				"type": "String"
+			},
+			{
+				"name": "KEY_NONKEY_3",
+				"type": "String"
+			},
+			{
+				"name": "REGULAR_CONSIGNMENT",
+				"type": "String"
+			},
+			{
+				"name": "STATE_WATERFALL_SD_WO_T_NT",
+				"type": "String"
+			},
+			{
+				"name": "STATE_WATERFALL_SD",
+				"type": "String"
+			},
+			{
+				"name": "VC_RP_PER_MT",
+				"type": "String"
+			},
+			{
+				"name": "VC_RP_VALUE",
+				"type": "String"
+			},
+			{
+				"name": "CONTRIBUTION_RP_VALUE",
+				"type": "String"
+			},
+			{
+				"name": "A767_FREIGHT_VALUE",
+				"type": "String"
+			},
+			{
+				"name": "A767_Z3_ZJ_FREIGHT_VALUE",
+				"type": "String"
+			},
+			{
+				"name": "BUSINESS_AREA",
+				"type": "String"
+			},
+			{
+				"name": "PROFIT_CENTRE",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

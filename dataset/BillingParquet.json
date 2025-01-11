@@ -1,0 +1,21 @@
+{
+	"name": "BillingParquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RawlAzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "BillingTable",
+				"container": "destination"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

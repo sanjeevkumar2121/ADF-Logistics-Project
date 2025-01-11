@@ -1,0 +1,17 @@
+{
+	"name": "Logistics_db_link_service",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "logisticsservermain.database.windows.net",
+			"database": "logisticDB",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "logisticsdb",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQENEMTI2NTg5LUMzMTItNEJFRS1BQ0NDLTdCQ0M2NTFFODQ5Rl8xYTE3YjhiYS04N2UyLTRjMGQtOTdjMi0wMTZhYzgyZDMyMjUiDQp9"
+		}
+	}
+}

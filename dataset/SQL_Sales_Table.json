@@ -1,0 +1,17 @@
+{
+	"name": "SQL_Sales_Table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Logistics_db_link_service",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "sales"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

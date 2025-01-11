@@ -1,0 +1,88 @@
+{
+	"name": "Incremental_Append_logistic_dataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "LogisticsParquet",
+						"type": "DatasetReference"
+					},
+					"name": "maindatasource"
+				},
+				{
+					"dataset": {
+						"referenceName": "backend_dataset",
+						"type": "DatasetReference"
+					},
+					"name": "backenddatasource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "LogosticBronzeParquet",
+						"type": "DatasetReference"
+					},
+					"name": "logisticsink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "union1"
+				},
+				{
+					"name": "sort1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          SHIPMENTNO as string,",
+				"          TRANSPORTERCODE as string,",
+				"          TRANSPORTERNAME as string,",
+				"          MODEOFTRANSPORT as string,",
+				"          MEANSOFTRANSPORT_TYPE as string,",
+				"          PRIMARY_FREIGHT as string,",
+				"          SECONDARY_FREIGHT as string,",
+				"          TOTAL_FREIGHT as string,",
+				"          LORRYORTRUCKNO as string,",
+				"          TRUCKTYPEHU as string,",
+				"          TRUCKTYPEDESCHU as string,",
+				"          BILLINGDOCUMENT as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> maindatasource",
+				"source(output(",
+				"          SHIPMENTNO as string,",
+				"          TRANSPORTERCODE as string,",
+				"          TRANSPORTERNAME as string,",
+				"          MODEOFTRANSPORT as string,",
+				"          MEANSOFTRANSPORT_TYPE as string,",
+				"          PRIMARY_FREIGHT as string,",
+				"          SECONDARY_FREIGHT as string,",
+				"          TOTAL_FREIGHT as string,",
+				"          LORRYORTRUCKNO as string,",
+				"          TRUCKTYPEHU as string,",
+				"          TRUCKTYPEDESCHU as string,",
+				"          BILLINGDOCUMENT as long",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> backenddatasource",
+				"maindatasource, backenddatasource union(byName: true)~> union1",
+				"union1 sort(desc(BILLINGDOCUMENT, true)) ~> sort1",
+				"sort1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     truncate: true,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     partitionBy('hash', 1)) ~> logisticsink"
+			]
+		}
+	}
+}

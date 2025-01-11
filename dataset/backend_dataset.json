@@ -1,0 +1,74 @@
+{
+	"name": "backend_dataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "backend_AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Logisticdata.csv",
+				"folderPath": "logiscticsdata",
+				"container": "backenddata"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "SHIPMENTNO",
+				"type": "String"
+			},
+			{
+				"name": "TRANSPORTERCODE",
+				"type": "String"
+			},
+			{
+				"name": "TRANSPORTERNAME",
+				"type": "String"
+			},
+			{
+				"name": "MODEOFTRANSPORT",
+				"type": "String"
+			},
+			{
+				"name": "MEANSOFTRANSPORT_TYPE",
+				"type": "String"
+			},
+			{
+				"name": "PRIMARY_FREIGHT",
+				"type": "String"
+			},
+			{
+				"name": "SECONDARY_FREIGHT",
+				"type": "String"
+			},
+			{
+				"name": "TOTAL_FREIGHT",
+				"type": "String"
+			},
+			{
+				"name": "LORRYORTRUCKNO",
+				"type": "String"
+			},
+			{
+				"name": "TRUCKTYPEHU",
+				"type": "String"
+			},
+			{
+				"name": "TRUCKTYPEDESCHU",
+				"type": "String"
+			},
+			{
+				"name": "BILLINGDOCUMENT",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

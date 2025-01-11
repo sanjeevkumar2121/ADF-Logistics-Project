@@ -1,0 +1,17 @@
+{
+	"name": "LogisticsTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Logistics_db_link_service",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "logistics"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

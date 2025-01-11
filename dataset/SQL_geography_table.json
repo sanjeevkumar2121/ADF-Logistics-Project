@@ -1,0 +1,17 @@
+{
+	"name": "SQL_geography_table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Logistics_db_link_service",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "geography"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

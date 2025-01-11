@@ -1,0 +1,17 @@
+{
+	"name": "miscellaneous_table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Logistics_db_link_service",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "miscellaneous"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
