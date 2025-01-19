@@ -1,0 +1,43 @@
+{
+	"name": "metadatadtaset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "metadataAzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "adf_questionsdataset"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "metadatafile.csv",
+				"container": "sourcefolder"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "FileName",
+				"type": "String"
+			},
+			{
+				"name": "FileType",
+				"type": "String"
+			},
+			{
+				"name": "Folder Path",
+				"type": "String"
+			},
+			{
+				"name": "TargetTable",
+				"type": "String"
+			}
+		]
+	}
+}
