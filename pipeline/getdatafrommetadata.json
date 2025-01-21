@@ -67,6 +67,71 @@
 									"type": "Expression"
 								}
 							}
+						},
+						{
+							"name": "Switch1",
+							"type": "Switch",
+							"dependsOn": [
+								{
+									"activity": "check file names",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"on": {
+									"value": "@item().FileType",
+									"type": "Expression"
+								},
+								"cases": [
+									{
+										"value": "CSV",
+										"activities": [
+											{
+												"name": "CSVFOUND",
+												"type": "SetVariable",
+												"dependsOn": [],
+												"policy": {
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "CSVFILE",
+													"value": {
+														"value": "@concat('this is csv file name is ', item().FileName)",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"value": "JSON",
+										"activities": [
+											{
+												"name": "JSONFound",
+												"type": "SetVariable",
+												"dependsOn": [],
+												"policy": {
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "JSON",
+													"value": {
+														"value": "@concat('This is JSon File :',item().FileName)",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									}
+								]
+							}
 						}
 					]
 				}
@@ -74,6 +139,12 @@
 		],
 		"variables": {
 			"Filename": {
+				"type": "String"
+			},
+			"CSVFILE": {
+				"type": "String"
+			},
+			"JSON": {
 				"type": "String"
 			}
 		},

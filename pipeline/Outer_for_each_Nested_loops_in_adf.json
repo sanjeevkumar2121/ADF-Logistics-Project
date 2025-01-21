@@ -77,6 +77,17 @@
 				}
 			}
 		],
+		"variables": {
+			"Filename": {
+				"type": "String"
+			},
+			"CSVFILE": {
+				"type": "String"
+			},
+			"JSON": {
+				"type": "String"
+			}
+		},
 		"folder": {
 			"name": "For_each_implementation"
 		},
