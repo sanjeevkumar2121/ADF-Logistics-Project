@@ -1,0 +1,69 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "ADFLogistics"
+		},
+		"BonzeAzureBlobStorage_connectionString": {
+			"value": ""
+		},
+		"BronzeAzureDataLakeStorage_accountKey": {
+			"value": ""
+		},
+		"DestinationAzureBlobStorageLinkService_connectionString": {
+			"value": ""
+		},
+		"Logistics_db_link_service_password": {
+			"value": ""
+		},
+		"RawlAzureBlobStorage_connectionString": {
+			"value": ""
+		},
+		"SqlServer1_password": {
+			"value": ""
+		},
+		"backend_AzureBlobStorage_connectionString": {
+			"value": ""
+		},
+		"metadataAzureBlobStorage_connectionString": {
+			"value": ""
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"value": "logisticsservermain.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"value": "logisticDB"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "logisticsdb"
+		},
+		"AzureSqlDatabase2_properties_typeProperties_connectionString_secretName": {
+			"value": "LogisticsDBConnection"
+		},
+		"BronzeAzureDataLakeStorage_properties_typeProperties_url": {
+			"value": "https://storagelogisticmedilian.dfs.core.windows.net/"
+		},
+		"LogisticDBKey_properties_typeProperties_baseUrl": {
+			"value": "https://logisticskeyvaultcred.vault.azure.net/"
+		},
+		"Logistics_db_link_service_properties_typeProperties_server": {
+			"value": "logisticsservermain.database.windows.net"
+		},
+		"Logistics_db_link_service_properties_typeProperties_database": {
+			"value": "logisticDB"
+		},
+		"Logistics_db_link_service_properties_typeProperties_userName": {
+			"value": "logisticsdb"
+		},
+		"SqlServer1_properties_typeProperties_server": {
+			"value": "S-DHIMAN"
+		},
+		"SqlServer1_properties_typeProperties_database": {
+			"value": "AWN_STG_Demo"
+		},
+		"SqlServer1_properties_typeProperties_userName": {
+			"value": "sanjeevk"
+		}
+	}
+}
