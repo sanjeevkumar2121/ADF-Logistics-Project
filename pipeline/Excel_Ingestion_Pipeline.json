@@ -83,6 +83,14 @@
 				}
 			}
 		],
+		"variables": {
+			"Exceptionoccur": {
+				"type": "String"
+			},
+			"True": {
+				"type": "String"
+			}
+		},
 		"annotations": [],
 		"lastPublishTime": "2025-01-11T16:21:16Z"
 	},

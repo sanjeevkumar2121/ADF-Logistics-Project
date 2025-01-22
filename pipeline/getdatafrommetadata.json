@@ -146,6 +146,12 @@
 			},
 			"JSON": {
 				"type": "String"
+			},
+			"Exceptionoccur": {
+				"type": "String"
+			},
+			"True": {
+				"type": "String"
 			}
 		},
 		"folder": {

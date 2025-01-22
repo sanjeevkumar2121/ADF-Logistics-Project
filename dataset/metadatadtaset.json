@@ -13,7 +13,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "metadatafile.csv",
+				"fileName": "trycatchmetadatafile.csv",
 				"container": "sourcefolder"
 			},
 			"columnDelimiter": ",",
