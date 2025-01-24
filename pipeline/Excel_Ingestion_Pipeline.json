@@ -63,18 +63,15 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "ExcelSource",
-									"storeSettings": {
-										"type": "AzureBlobFSReadSettings",
-										"recursive": true,
-										"enablePartitionDiscovery": false
-									}
+									"type": "AzureSqlSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
 								},
 								"enableStaging": false
 							},
 							"inputs": [
 								{
-									"referenceName": "Excel_Sheet_DataSet",
+									"referenceName": "AzureSqlTable1",
 									"type": "DatasetReference"
 								}
 							]
