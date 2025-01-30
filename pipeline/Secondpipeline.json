@@ -1,9 +1,9 @@
 {
-	"name": "pipeline1",
+	"name": "Secondpipeline",
 	"properties": {
 		"activities": [
 			{
-				"name": "FirstPipelineSetvariable1",
+				"name": "SecondPipelineSetvariable1",
 				"type": "SetVariable",
 				"dependsOn": [],
 				"policy": {
@@ -12,7 +12,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "firstPipelinevar",
+					"variableName": "secondpipeline",
 					"value": {
 						"value": "@concat('this is {}',pipeline().Pipeline)",
 						"type": "Expression"
@@ -21,9 +21,6 @@
 			}
 		],
 		"variables": {
-			"firstPipelinevar": {
-				"type": "String"
-			},
 			"secondpipeline": {
 				"type": "String"
 			}

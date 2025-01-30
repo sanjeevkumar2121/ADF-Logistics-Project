@@ -1,0 +1,19 @@
+{
+	"name": "NestedJson2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "metadataAzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Nestedjsonsimplyfy.json",
+				"container": "destinationfolder"
+			}
+		},
+		"schema": {}
+	}
+}

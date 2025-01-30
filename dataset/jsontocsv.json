@@ -1,0 +1,23 @@
+{
+	"name": "jsontocsv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "metadataAzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "nestedjson.json",
+				"container": "destinationfolder"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
