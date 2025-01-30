@@ -185,7 +185,7 @@
 					"elapsedTimeMetric": {}
 				},
 				"annotations": [],
-				"lastPublishTime": "2025-01-11T16:21:16Z"
+				"lastPublishTime": "2025-01-21T10:14:03Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/getmetadata_excel')]",
@@ -233,7 +233,7 @@
 					"elapsedTimeMetric": {}
 				},
 				"annotations": [],
-				"lastPublishTime": "2024-12-10T17:31:35Z"
+				"lastPublishTime": "2025-01-21T10:14:04Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/GeoGraphydataflow_to_db')]"
@@ -282,7 +282,7 @@
 					"elapsedTimeMetric": {}
 				},
 				"annotations": [],
-				"lastPublishTime": "2025-01-05T17:35:29Z"
+				"lastPublishTime": "2025-01-21T10:14:04Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/Incremental_SCDII_UPSERT_logistic_dataflow')]"
@@ -333,7 +333,7 @@
 					"name": "IncremntalLoad"
 				},
 				"annotations": [],
-				"lastPublishTime": "2024-12-25T18:54:18Z"
+				"lastPublishTime": "2025-01-21T10:14:04Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/Incremental_Append_logistic_dataflow')]"
@@ -783,7 +783,7 @@
 					"elapsedTimeMetric": {}
 				},
 				"annotations": [],
-				"lastPublishTime": "2024-12-12T11:56:57Z"
+				"lastPublishTime": "2025-01-21T10:14:03Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/RowInputSourceCSV')]",
@@ -860,11 +860,60 @@
 					"elapsedTimeMetric": {}
 				},
 				"annotations": [],
-				"lastPublishTime": "2025-01-05T17:35:29Z"
+				"lastPublishTime": "2025-01-21T10:14:03Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/logistic_tb_json_dataset')]",
 				"[concat(variables('factoryId'), '/datasets/LogisticsParquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/JSONtoCSV')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "newstedJSONdataflow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "newstedJSONdataflow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "adf_questions_nv"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/newstedJSONdataflow')]"
 			]
 		},
 		{
@@ -908,10 +957,71 @@
 					"elapsedTimeMetric": {}
 				},
 				"annotations": [],
-				"lastPublishTime": "2024-12-10T17:31:36Z"
+				"lastPublishTime": "2025-01-21T10:14:04Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/Logisticsdataflow_2DB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Masterpipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Execute Pipeline1",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "pipeline1",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "Secondpipeline",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Execute Pipeline1",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Secondpipeline",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "adf_questions_nv/pipeline_orchestration"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pipeline1')]",
+				"[concat(variables('factoryId'), '/pipelines/Secondpipeline')]"
 			]
 		},
 		{
@@ -979,7 +1089,7 @@
 					"elapsedTimeMetric": {}
 				},
 				"annotations": [],
-				"lastPublishTime": "2025-01-11T16:21:17Z"
+				"lastPublishTime": "2025-01-21T10:14:03Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/OnPremSqlServerTable')]",
@@ -1087,7 +1197,7 @@
 					"name": "For_each_implementation"
 				},
 				"annotations": [],
-				"lastPublishTime": "2025-01-11T16:21:16Z"
+				"lastPublishTime": "2025-01-21T10:14:03Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Excel1')]",
@@ -1135,11 +1245,50 @@
 					"elapsedTimeMetric": {}
 				},
 				"annotations": [],
-				"lastPublishTime": "2024-12-10T17:31:35Z"
+				"lastPublishTime": "2025-01-21T10:14:04Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/SalesOrganization_dataflow_to_db')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Secondpipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "SecondPipelineSetvariable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "secondpipeline",
+							"value": {
+								"value": "@concat('this is {}',pipeline().Pipeline)",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"secondpipeline": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "adf_questions_nv/pipeline_orchestration"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/getdatafrommetadata')]",
@@ -1300,6 +1449,193 @@
 				"folder": {
 					"name": "adf_questions_nv"
 				},
+				"annotations": [],
+				"lastPublishTime": "2025-01-21T10:14:02Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/metadatadtaset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "FirstPipelineSetvariable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "firstPipelinevar",
+							"value": {
+								"value": "@concat('this is {}',pipeline().Pipeline)",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"firstPipelinevar": {
+						"type": "String"
+					},
+					"secondpipeline": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "adf_questions_nv/pipeline_orchestration"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trycatchpipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "TryCatchBlock",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@equals(activity('Copy data1').Status,'Success')",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "Exceptionvariable1",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "Exceptionoccur",
+										"value": {
+											"value": "@concat('Exception occur', activity('Copy data1').output.Status) ",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "True",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "True",
+										"value": {
+											"value": "@concat('this is :',activity('Copy data1').Status,' Activity')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "metadatadtaset",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "metadatadtaset",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"Exceptionoccur": {
+						"type": "String"
+					},
+					"True": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "adf_questions_nv"
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -1352,7 +1688,7 @@
 					"name": "IncremntalLoad"
 				},
 				"annotations": [],
-				"lastPublishTime": "2025-01-05T17:35:29Z"
+				"lastPublishTime": "2025-01-21T10:14:04Z"
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/Incremental_SCDII_UPSERT_logistic_dataflow')]"
@@ -1704,6 +2040,30 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/RawlAzureBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/NestedJson2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "metadataAzureBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Nestedjsonsimplyfy.json",
+						"container": "destinationfolder"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/metadataAzureBlobStorage')]"
 			]
 		},
 		{
@@ -4185,6 +4545,34 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/jsontocsv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "metadataAzureBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "nestedjson.json",
+						"container": "destinationfolder"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/metadataAzureBlobStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/logistic_tb_json_dataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -4316,6 +4704,79 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/Logistics_db_link_service')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/nestedJson')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "metadataAzureBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "ADF_QUESTION.json",
+						"container": "sourcefolder"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"type": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"ppu": {
+							"type": "number"
+						},
+						"batters": {
+							"type": "object",
+							"properties": {
+								"batter": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"id": {
+												"type": "string"
+											},
+											"type": {
+												"type": "string"
+											}
+										}
+									}
+								}
+							}
+						},
+						"topping": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/metadataAzureBlobStorage')]"
 			]
 		},
 		{
@@ -9338,6 +9799,76 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/RowInputSourceCSV')]",
 				"[concat(variables('factoryId'), '/datasets/Azure_logistics_table')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/newstedJSONdataflow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "ADF_QUESTION"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "nestedJson",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "NestedJson2",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "flatten1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          id as string,",
+						"          type as string,",
+						"          name as string,",
+						"          ppu as double,",
+						"          batters as (batter as (id as string, type as string)[]),",
+						"          topping as (id as string, type as string)[]",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments',",
+						"     singleQuoted: true) ~> source1",
+						"source1 foldDown(unrollMultiple(batters.batter,topping),",
+						"     mapColumn(",
+						"          id,",
+						"          type,",
+						"          name,",
+						"          ppu,",
+						"          batter = batters.batter,",
+						"          topping",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
+						"flatten1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/nestedJson')]",
+				"[concat(variables('factoryId'), '/datasets/NestedJson2')]"
 			]
 		},
 		{

@@ -13,6 +13,1630 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/COPY_Incremental_UPSERT_logistic_dataflow_copy1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "backend_dataset",
+								"type": "DatasetReference"
+							},
+							"name": "backenddatasource"
+						},
+						{
+							"dataset": {
+								"referenceName": "UpsertRecordsLogisticParquet",
+								"type": "DatasetReference"
+							},
+							"name": "lookupdestination"
+						},
+						{
+							"dataset": {
+								"referenceName": "UpsertRecordsLogisticParquet",
+								"type": "DatasetReference"
+							},
+							"name": "olddatasource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "UpsertRecordsLogisticParquet",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "join1"
+						},
+						{
+							"name": "WatermarkColumn"
+						},
+						{
+							"name": "union1"
+						},
+						{
+							"name": "filter1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "filter2"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          SHIPMENTNO as string,",
+						"          TRANSPORTERCODE as string,",
+						"          TRANSPORTERNAME as string,",
+						"          MODEOFTRANSPORT as string,",
+						"          MEANSOFTRANSPORT_TYPE as string,",
+						"          PRIMARY_FREIGHT as string,",
+						"          SECONDARY_FREIGHT as string,",
+						"          TOTAL_FREIGHT as string,",
+						"          LORRYORTRUCKNO as string,",
+						"          TRUCKTYPEHU as string,",
+						"          TRUCKTYPEDESCHU as string,",
+						"          BILLINGDOCUMENT as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> backenddatasource",
+						"source(output(",
+						"          SHIPMENTNO as string,",
+						"          TRANSPORTERCODE as string,",
+						"          TRANSPORTERNAME as string,",
+						"          MODEOFTRANSPORT as string,",
+						"          MEANSOFTRANSPORT_TYPE as string,",
+						"          PRIMARY_FREIGHT as string,",
+						"          SECONDARY_FREIGHT as string,",
+						"          TOTAL_FREIGHT as string,",
+						"          LORRYORTRUCKNO as string,",
+						"          TRUCKTYPEHU as string,",
+						"          TRUCKTYPEDESCHU as string,",
+						"          BILLINGDOCUMENT as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet',",
+						"     partitionBy('hash', 1)) ~> lookupdestination",
+						"source(output(",
+						"          SHIPMENTNO as string,",
+						"          TRANSPORTERCODE as string,",
+						"          TRANSPORTERNAME as string,",
+						"          MODEOFTRANSPORT as string,",
+						"          MEANSOFTRANSPORT_TYPE as string,",
+						"          PRIMARY_FREIGHT as string,",
+						"          SECONDARY_FREIGHT as string,",
+						"          TOTAL_FREIGHT as string,",
+						"          LORRYORTRUCKNO as string,",
+						"          TRUCKTYPEHU as string,",
+						"          TRUCKTYPEDESCHU as string,",
+						"          BILLINGDOCUMENT as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> olddatasource",
+						"lookupdestination, backenddatasource join(lookupdestination@BILLINGDOCUMENT == backenddatasource@BILLINGDOCUMENT,",
+						"     joinType:'outer',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 derive(Watermark = iif(isNull(lookupdestination@BILLINGDOCUMENT), 'New', iif((backenddatasource@TRANSPORTERNAME != lookupdestination@TRANSPORTERNAME),\"Updatedrecords\",\"Unchange\"))) ~> WatermarkColumn",
+						"olddatasource, select1 union(byName: true)~> union1",
+						"WatermarkColumn filter((Watermark == 'New') || (Watermark == 'Updatedrecords')) ~> filter1",
+						"filter1 select(mapColumn(",
+						"          SHIPMENTNO = backenddatasource@SHIPMENTNO,",
+						"          TRANSPORTERCODE = backenddatasource@TRANSPORTERCODE,",
+						"          TRANSPORTERNAME = backenddatasource@TRANSPORTERNAME,",
+						"          MODEOFTRANSPORT = backenddatasource@MODEOFTRANSPORT,",
+						"          MEANSOFTRANSPORT_TYPE = backenddatasource@MEANSOFTRANSPORT_TYPE,",
+						"          PRIMARY_FREIGHT = backenddatasource@PRIMARY_FREIGHT,",
+						"          SECONDARY_FREIGHT = backenddatasource@SECONDARY_FREIGHT,",
+						"          TOTAL_FREIGHT = backenddatasource@TOTAL_FREIGHT,",
+						"          LORRYORTRUCKNO = backenddatasource@LORRYORTRUCKNO,",
+						"          TRUCKTYPEHU = backenddatasource@TRUCKTYPEHU,",
+						"          TRUCKTYPEDESCHU = backenddatasource@TRUCKTYPEDESCHU,",
+						"          BILLINGDOCUMENT = backenddatasource@BILLINGDOCUMENT",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: false) ~> select1",
+						"union1 filter(BILLINGDOCUMENT == 4451300142L || BILLINGDOCUMENT == 4447405568L) ~> filter2",
+						"filter2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Customerdataflow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "RowInputSourceCSV",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "CustomerParquet",
+								"type": "DatasetReference"
+							},
+							"name": "customersink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          REPORT_FLAG as string,",
+						"          COMPANY_REGION_CLUBBED as string,",
+						"          COMPANY_REGION_CLUBBED_2 as string,",
+						"          COMPANY_REGION_CLUBBED_3 as string,",
+						"          COMPANY_REGION_CLUBBED_4 as string,",
+						"          SALES_ORGANISATION as string,",
+						"          DIVISIONCODE as string,",
+						"          DISTRIBUTIONCHANNEL as string,",
+						"          SALES_TYPE as string,",
+						"          SALES_TYPE_2 as string,",
+						"          SALES_TYPE_5 as string,",
+						"          BILLINGDOCUMENT as string,",
+						"          SHIPMENTNO as string,",
+						"          DELIVERY_NO as string,",
+						"          SONUMBER as string,",
+						"          ORDERQUANTITY as string,",
+						"          CANCELLEDINVOICENO as string,",
+						"          DOCUMENT_CATEGORY as string,",
+						"          BILLINGTYPE as string,",
+						"          SALES_FLAG as string,",
+						"          QUANTITY_ZERO_FLAG as string,",
+						"          EWAYBILLNO as string,",
+						"          EWAYDATE as string,",
+						"          INVOICEDQUANTITY as string,",
+						"          NETWR_VFKP as string,",
+						"          MRP_RS_BAG as string,",
+						"          GROSS_BILL_PRICE as string,",
+						"          INVOICE_PD as string,",
+						"          MANUAL_PD as string,",
+						"          NET_BILL_PRICE as string,",
+						"          SGST as string,",
+						"          CGST as string,",
+						"          IGST as string,",
+						"          TOTAL_TAX as string,",
+						"          PRIMARY_FREIGHT as string,",
+						"          MANUAL_FREIGHT as string,",
+						"          TOTAL_PRIMARY_FREIGHT as string,",
+						"          PRIMARY_FREIGHT_2 as string,",
+						"          SECONDARY_FREIGHT as string,",
+						"          TOTAL_FREIGHT as string,",
+						"          HANDLING_CHARGE as string,",
+						"          GODOWN_RENT as string,",
+						"          BRANCH_EXPENSES_MANUAL as string,",
+						"          TDC as string,",
+						"          TOTAL_DISCOUNT as string,",
+						"          TOTAL_COMMISION as string,",
+						"          TOTAL_DISCOUNT_COMMISION as string,",
+						"          CLINKER_PERCENTAGE as string,",
+						"          TOTAL_CLINKER_FREIGHT as string,",
+						"          PACKING_CHARGES as string,",
+						"          OTHER_MANUAL_ADJUSTMENT as string,",
+						"          NCR_WITHOUT_SUBSIDY as string,",
+						"          TOTAL_REMISSION as string,",
+						"          FINAL_NCR as string,",
+						"          TOTAL_CASH_REMMISSION as string,",
+						"          NET_BILL_PRICE_WITH_GD_IMPACT as string,",
+						"          PF_DIST as string,",
+						"          SF_DIST as string,",
+						"          ORDER_PLATFORM as string,",
+						"          PONUMBER as string,",
+						"          PO_DATE as string,",
+						"          REPORT_DATE as string,",
+						"          WEEK_NO as string,",
+						"          BILLINGDATE_TIMESTAMP as string,",
+						"          BILLINGDATE as string,",
+						"          SODATE as string,",
+						"          DO_RELEASE_DATE_TIME as string,",
+						"          SCHEDULE_DATE_TIME as string,",
+						"          SO_RELEASE_DATE_TIME as string,",
+						"          DELIVERY_DATE_TIME as string,",
+						"          TRANS_TAGG_DATE_TIME as string,",
+						"          SHIP_DATE_TIME as string,",
+						"          PKGCALL_DATE_TIME as string,",
+						"          YARD_IN_DATE_TIME as string,",
+						"          YARD_OUT_DATE_TIME as string,",
+						"          SECURITY_IN_DATE_TIME as string,",
+						"          TARE_DATE_TIME as string,",
+						"          ACTUAL_LOAD_DATE_TIME as string,",
+						"          GROSS_DATE_TIME as string,",
+						"          BILLING_DATE_TIME as string,",
+						"          SECURITY_OUT_DATE_TIME as string,",
+						"          TAT as string,",
+						"          SO_DO_TIME as string,",
+						"          DO_SHIP_TIME as string,",
+						"          DO_TRANS_TAGG_TIME as string,",
+						"          TRANS_TAGG_SHIP_TIME as string,",
+						"          SHIP_PH_CALL_TIME as string,",
+						"          PH_SEC_CALL_TIME as string,",
+						"          SEC_TARE_CALL_TIME as string,",
+						"          TW_LOAD_TIME as string,",
+						"          LOAD_GW_TIME as string,",
+						"          GW_INV_TIME as string,",
+						"          INV_GO_TIME as string,",
+						"          SLA_DATE_TIME as string,",
+						"          INCOTERMS1 as string,",
+						"          STATE_CODE_TRANSACTION as string,",
+						"          RATE_CODE as string,",
+						"          RATE_CODE_DESC as string,",
+						"          TZONE as string,",
+						"          TZONE_DESC as string,",
+						"          MATERIALNUMBER as string,",
+						"          MATERIAL_DESCRIPTION as string,",
+						"          MATERIAL_SUBTYPE_MKT as string,",
+						"          BAG_TYPE_ACTUAL as string,",
+						"          PRODUCT_SALES_TEAM as string,",
+						"          PRODUCT_MFG_TEAM as string,",
+						"          MATNR_BRAND as string,",
+						"          BLENDED_NONBLENDED as string,",
+						"          BAG_LOOSE as string,",
+						"          MANUFACTURING_PLANT as string,",
+						"          ACTUAL_MFG_PLANT as string,",
+						"          PLANTCODE as string,",
+						"          PLANTDESC as string,",
+						"          PLANT_TYPE_2 as string,",
+						"          PLANT_DEPOT_TYPE as string,",
+						"          PLANT_CODE_CLUBBED as string,",
+						"          PLANT_NAME_CLUBBED as string,",
+						"          PLANT_STATE_CODE as string,",
+						"          PLANT_STATE_NAME as string,",
+						"          PLANT_SUB_STATE as string,",
+						"          DEPODIRECT as string,",
+						"          DEPODIRECT_2 as string,",
+						"          ROUTE as string,",
+						"          ROUTEDESC as string,",
+						"          TRANSPORTERCODE as string,",
+						"          TRANSPORTERNAME as string,",
+						"          DRIVERNAME as string,",
+						"          MOBILENO_DRIVER as string,",
+						"          LORRYORTRUCKNO as string,",
+						"          TRUCKTYPEHU as string,",
+						"          TRUCKTYPEDESCHU as string,",
+						"          SHIPMENTTYPE as string,",
+						"          SHIPPINGTYPE as string,",
+						"          CHARG as string,",
+						"          BATCHSOURCE as string,",
+						"          BATCHNUMBER as string,",
+						"          MODEOFTRANSPORT as string,",
+						"          MEANSOFTRANSPORT_TYPE as string,",
+						"          STOLOC as string,",
+						"          DAMAGE_FLAG as string,",
+						"          DAMAGE_FLAG_2 as string,",
+						"          TRIPID as string,",
+						"          SHIFT as string,",
+						"          SO_CODE_TRANSACTION as string,",
+						"          SO_NAME_TRANSACTION as string,",
+						"          ASM_CODE_TRANSACTION as string,",
+						"          ASM_NAME_TRANSACTION as string,",
+						"          RSM_CODE_TRANSACTION as string,",
+						"          RSM_NAME_TRANSACTION as string,",
+						"          ZSM_CODE_TRANSACTION as string,",
+						"          ZSM_NAME_TRANSACTION as string,",
+						"          RSD_CODE_TRANSACTION as string,",
+						"          RSD_NAME_TRANSACTION as string,",
+						"          Z6_CODE_TRANSACTION as string,",
+						"          Z6_NAME_TRANSACTION as string,",
+						"          SOLDTOPARTYCODE as string,",
+						"          SOLDTOPARTYNAME as string,",
+						"          STATE_CODE_SOLDTO as string,",
+						"          STATE_NAME_SOLDTO as string,",
+						"          CITY_CODE_SOLDTO as string,",
+						"          CITY_NAME_SOLDTO as string,",
+						"          COUNTY_CODE_SOLDTO as string,",
+						"          COUNTY_NAME_SOLDTO as string,",
+						"          SALES_TERRITORY_SOLDTO as string,",
+						"          TALUKA_CODE_SOLDTO as string,",
+						"          TZONE_SOLDTO as string,",
+						"          TZONE_NAME_SOLDTO as string,",
+						"          LONGITUDE_SOLDTO as string,",
+						"          LATITUDE_SOLDTO as string,",
+						"          BP_TYPE_SOLDTO as string,",
+						"          BP_DESCRIPTION_SOLDTO as string,",
+						"          RATE_CODE_SOLDTO as string,",
+						"          RATE_CODE_DESC_SOLDTO as string,",
+						"          CUSTOMER_GRP1_SOLDTO as string,",
+						"          CUSTOMER_GRP1_DESC_SOLDTO as string,",
+						"          CUSTOMER_GRP2_SOLDTO as string,",
+						"          CUSTOMER_GROUP_SOLDTO as string,",
+						"          CUSTOMER_GROUP_GOVT_SOLDTO as string,",
+						"          CUSTOMER_ACCOUNT_GROUP_SOLDTO as string,",
+						"          SO_CODE_MASTER_SOLDTO as string,",
+						"          SO_NAME_MASTER_SOLDTO as string,",
+						"          ASM_CODE_MASTER_SOLDTO as string,",
+						"          ASM_NAME_MASTER_SOLDTO as string,",
+						"          RSM_CODE_MASTER_SOLDTO as string,",
+						"          RSM_NAME_MASTER_SOLDTO as string,",
+						"          ZSM_CODE_MASTER_SOLDTO as string,",
+						"          ZSM_NAME_MASTER_SOLDTO as string,",
+						"          RSD_CODE_MASTER_SOLDTO as string,",
+						"          RSD_NAME_MASTER_SOLDTO as string,",
+						"          Z6_CODE_MASTER_SOLDTO as string,",
+						"          Z6_NAME_MASTER_SOLDTO as string,",
+						"          SHIPTOPARTYCODE as string,",
+						"          SHIPTOPARTYNAME as string,",
+						"          Z6_CODE_MASTER_SHIPTO as string,",
+						"          Z6_NAME_MASTER_SHIPTO as string,",
+						"          UNLOADINGPOINTCODE as string,",
+						"          UNLOADINGPOINTNAME as string,",
+						"          STATE_CODE_UNLOADINGPOINT as string,",
+						"          STATE_NAME_UNLOADINGPOINT as string,",
+						"          CITY_CODE_UNLOADINGPOINT as string,",
+						"          CITY_NAME_UNLOADINGPOINT as string,",
+						"          COUNTY_CODE_UNLOADINGPOINT as string,",
+						"          COUNTY_NAME_UNLOADINGPOINT as string,",
+						"          SALES_TERRITORY_UNLOADINGPOINT as string,",
+						"          TALUKA_CODE_UNLOADINGPOINT as string,",
+						"          TZONE_UNLOADINGPOINT as string,",
+						"          TZONE_NAME_UNLOADINGPOINT as string,",
+						"          LONGITUDE_UNLOADINGPOINT as string,",
+						"          LATITUDE_UNLOADINGPOINT as string,",
+						"          BP_TYPE_UNLOADINGPOINT as string,",
+						"          BP_DESCRIPTION_UNLOADINGPOINT as string,",
+						"          RATE_CODE_UNLOADINGPOINT as string,",
+						"          RATE_CODE_DESC_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GRP1_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GRP1_DESC_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GRP2_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GROUP_UNLOADINGPOINT as string,",
+						"          CUSTOMER_ACCOUNT_GROUP_UNLOADINGPOINT as string,",
+						"          SO_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          SO_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          ASM_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          ASM_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          RSM_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          RSM_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          RSM_EMAIL_MASTER_UNLOADINGPOINT as string,",
+						"          ZSM_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          ZSM_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          ZSM_EMAIL_MASTER_UNLOADINGPOINT as string,",
+						"          RSD_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          RSD_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          Z6_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          Z6_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          KEY_NONKEY_1 as string,",
+						"          KEY_NONKEY_2 as string,",
+						"          KEY_NONKEY_3 as string,",
+						"          REGULAR_CONSIGNMENT as string,",
+						"          STATE_WATERFALL_SD_WO_T_NT as string,",
+						"          STATE_WATERFALL_SD as string,",
+						"          VC_RP_PER_MT as string,",
+						"          VC_RP_VALUE as string,",
+						"          CONTRIBUTION_RP_VALUE as string,",
+						"          A767_FREIGHT_VALUE as string,",
+						"          A767_Z3_ZJ_FREIGHT_VALUE as string,",
+						"          BUSINESS_AREA as string,",
+						"          PROFIT_CENTRE as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 select(mapColumn(",
+						"          SOLDTOPARTYCODE,",
+						"          SOLDTOPARTYNAME,",
+						"          SHIPTOPARTYCODE,",
+						"          SHIPTOPARTYNAME,",
+						"          BP_TYPE_SOLDTO,",
+						"          BP_TYPE_UNLOADINGPOINT,",
+						"          BILLINGDOCUMENT",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> customersink"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Customerdataflow_to_DB')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "RowInputSourceCSV",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "SQL_Customer_Table",
+								"type": "DatasetReference"
+							},
+							"name": "customersink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          REPORT_FLAG as string,",
+						"          COMPANY_REGION_CLUBBED as string,",
+						"          COMPANY_REGION_CLUBBED_2 as string,",
+						"          COMPANY_REGION_CLUBBED_3 as string,",
+						"          COMPANY_REGION_CLUBBED_4 as string,",
+						"          SALES_ORGANISATION as string,",
+						"          DIVISIONCODE as string,",
+						"          DISTRIBUTIONCHANNEL as string,",
+						"          SALES_TYPE as string,",
+						"          SALES_TYPE_2 as string,",
+						"          SALES_TYPE_5 as string,",
+						"          BILLINGDOCUMENT as integer,",
+						"          SHIPMENTNO as string,",
+						"          DELIVERY_NO as string,",
+						"          SONUMBER as string,",
+						"          ORDERQUANTITY as string,",
+						"          CANCELLEDINVOICENO as string,",
+						"          DOCUMENT_CATEGORY as string,",
+						"          BILLINGTYPE as string,",
+						"          SALES_FLAG as string,",
+						"          QUANTITY_ZERO_FLAG as string,",
+						"          EWAYBILLNO as string,",
+						"          EWAYDATE as string,",
+						"          INVOICEDQUANTITY as string,",
+						"          NETWR_VFKP as string,",
+						"          MRP_RS_BAG as string,",
+						"          GROSS_BILL_PRICE as string,",
+						"          INVOICE_PD as string,",
+						"          MANUAL_PD as string,",
+						"          NET_BILL_PRICE as string,",
+						"          SGST as string,",
+						"          CGST as string,",
+						"          IGST as string,",
+						"          TOTAL_TAX as string,",
+						"          PRIMARY_FREIGHT as string,",
+						"          MANUAL_FREIGHT as string,",
+						"          TOTAL_PRIMARY_FREIGHT as string,",
+						"          PRIMARY_FREIGHT_2 as string,",
+						"          SECONDARY_FREIGHT as string,",
+						"          TOTAL_FREIGHT as string,",
+						"          HANDLING_CHARGE as string,",
+						"          GODOWN_RENT as string,",
+						"          BRANCH_EXPENSES_MANUAL as string,",
+						"          TDC as string,",
+						"          TOTAL_DISCOUNT as string,",
+						"          TOTAL_COMMISION as string,",
+						"          TOTAL_DISCOUNT_COMMISION as string,",
+						"          CLINKER_PERCENTAGE as string,",
+						"          TOTAL_CLINKER_FREIGHT as string,",
+						"          PACKING_CHARGES as string,",
+						"          OTHER_MANUAL_ADJUSTMENT as string,",
+						"          NCR_WITHOUT_SUBSIDY as string,",
+						"          TOTAL_REMISSION as string,",
+						"          FINAL_NCR as string,",
+						"          TOTAL_CASH_REMMISSION as string,",
+						"          NET_BILL_PRICE_WITH_GD_IMPACT as string,",
+						"          PF_DIST as string,",
+						"          SF_DIST as string,",
+						"          ORDER_PLATFORM as string,",
+						"          PONUMBER as string,",
+						"          PO_DATE as string,",
+						"          REPORT_DATE as string,",
+						"          WEEK_NO as string,",
+						"          BILLINGDATE_TIMESTAMP as string,",
+						"          BILLINGDATE as string,",
+						"          SODATE as string,",
+						"          DO_RELEASE_DATE_TIME as string,",
+						"          SCHEDULE_DATE_TIME as string,",
+						"          SO_RELEASE_DATE_TIME as string,",
+						"          DELIVERY_DATE_TIME as string,",
+						"          TRANS_TAGG_DATE_TIME as string,",
+						"          SHIP_DATE_TIME as string,",
+						"          PKGCALL_DATE_TIME as string,",
+						"          YARD_IN_DATE_TIME as string,",
+						"          YARD_OUT_DATE_TIME as string,",
+						"          SECURITY_IN_DATE_TIME as string,",
+						"          TARE_DATE_TIME as string,",
+						"          ACTUAL_LOAD_DATE_TIME as string,",
+						"          GROSS_DATE_TIME as string,",
+						"          BILLING_DATE_TIME as string,",
+						"          SECURITY_OUT_DATE_TIME as string,",
+						"          TAT as string,",
+						"          SO_DO_TIME as string,",
+						"          DO_SHIP_TIME as string,",
+						"          DO_TRANS_TAGG_TIME as string,",
+						"          TRANS_TAGG_SHIP_TIME as string,",
+						"          SHIP_PH_CALL_TIME as string,",
+						"          PH_SEC_CALL_TIME as string,",
+						"          SEC_TARE_CALL_TIME as string,",
+						"          TW_LOAD_TIME as string,",
+						"          LOAD_GW_TIME as string,",
+						"          GW_INV_TIME as string,",
+						"          INV_GO_TIME as string,",
+						"          SLA_DATE_TIME as string,",
+						"          INCOTERMS1 as string,",
+						"          STATE_CODE_TRANSACTION as string,",
+						"          RATE_CODE as string,",
+						"          RATE_CODE_DESC as string,",
+						"          TZONE as string,",
+						"          TZONE_DESC as string,",
+						"          MATERIALNUMBER as string,",
+						"          MATERIAL_DESCRIPTION as string,",
+						"          MATERIAL_SUBTYPE_MKT as string,",
+						"          BAG_TYPE_ACTUAL as string,",
+						"          PRODUCT_SALES_TEAM as string,",
+						"          PRODUCT_MFG_TEAM as string,",
+						"          MATNR_BRAND as string,",
+						"          BLENDED_NONBLENDED as string,",
+						"          BAG_LOOSE as string,",
+						"          MANUFACTURING_PLANT as string,",
+						"          ACTUAL_MFG_PLANT as string,",
+						"          PLANTCODE as string,",
+						"          PLANTDESC as string,",
+						"          PLANT_TYPE_2 as string,",
+						"          PLANT_DEPOT_TYPE as string,",
+						"          PLANT_CODE_CLUBBED as string,",
+						"          PLANT_NAME_CLUBBED as string,",
+						"          PLANT_STATE_CODE as string,",
+						"          PLANT_STATE_NAME as string,",
+						"          PLANT_SUB_STATE as string,",
+						"          DEPODIRECT as string,",
+						"          DEPODIRECT_2 as string,",
+						"          ROUTE as string,",
+						"          ROUTEDESC as string,",
+						"          TRANSPORTERCODE as string,",
+						"          TRANSPORTERNAME as string,",
+						"          DRIVERNAME as string,",
+						"          MOBILENO_DRIVER as string,",
+						"          LORRYORTRUCKNO as string,",
+						"          TRUCKTYPEHU as string,",
+						"          TRUCKTYPEDESCHU as string,",
+						"          SHIPMENTTYPE as string,",
+						"          SHIPPINGTYPE as string,",
+						"          CHARG as string,",
+						"          BATCHSOURCE as string,",
+						"          BATCHNUMBER as string,",
+						"          MODEOFTRANSPORT as string,",
+						"          MEANSOFTRANSPORT_TYPE as string,",
+						"          STOLOC as string,",
+						"          DAMAGE_FLAG as string,",
+						"          DAMAGE_FLAG_2 as string,",
+						"          TRIPID as string,",
+						"          SHIFT as string,",
+						"          SO_CODE_TRANSACTION as string,",
+						"          SO_NAME_TRANSACTION as string,",
+						"          ASM_CODE_TRANSACTION as string,",
+						"          ASM_NAME_TRANSACTION as string,",
+						"          RSM_CODE_TRANSACTION as string,",
+						"          RSM_NAME_TRANSACTION as string,",
+						"          ZSM_CODE_TRANSACTION as string,",
+						"          ZSM_NAME_TRANSACTION as string,",
+						"          RSD_CODE_TRANSACTION as string,",
+						"          RSD_NAME_TRANSACTION as string,",
+						"          Z6_CODE_TRANSACTION as string,",
+						"          Z6_NAME_TRANSACTION as string,",
+						"          SOLDTOPARTYCODE as integer,",
+						"          SOLDTOPARTYNAME as string,",
+						"          STATE_CODE_SOLDTO as string,",
+						"          STATE_NAME_SOLDTO as string,",
+						"          CITY_CODE_SOLDTO as string,",
+						"          CITY_NAME_SOLDTO as string,",
+						"          COUNTY_CODE_SOLDTO as string,",
+						"          COUNTY_NAME_SOLDTO as string,",
+						"          SALES_TERRITORY_SOLDTO as string,",
+						"          TALUKA_CODE_SOLDTO as string,",
+						"          TZONE_SOLDTO as string,",
+						"          TZONE_NAME_SOLDTO as string,",
+						"          LONGITUDE_SOLDTO as string,",
+						"          LATITUDE_SOLDTO as string,",
+						"          BP_TYPE_SOLDTO as string,",
+						"          BP_DESCRIPTION_SOLDTO as string,",
+						"          RATE_CODE_SOLDTO as string,",
+						"          RATE_CODE_DESC_SOLDTO as string,",
+						"          CUSTOMER_GRP1_SOLDTO as string,",
+						"          CUSTOMER_GRP1_DESC_SOLDTO as string,",
+						"          CUSTOMER_GRP2_SOLDTO as string,",
+						"          CUSTOMER_GROUP_SOLDTO as string,",
+						"          CUSTOMER_GROUP_GOVT_SOLDTO as string,",
+						"          CUSTOMER_ACCOUNT_GROUP_SOLDTO as string,",
+						"          SO_CODE_MASTER_SOLDTO as string,",
+						"          SO_NAME_MASTER_SOLDTO as string,",
+						"          ASM_CODE_MASTER_SOLDTO as string,",
+						"          ASM_NAME_MASTER_SOLDTO as string,",
+						"          RSM_CODE_MASTER_SOLDTO as string,",
+						"          RSM_NAME_MASTER_SOLDTO as string,",
+						"          ZSM_CODE_MASTER_SOLDTO as string,",
+						"          ZSM_NAME_MASTER_SOLDTO as string,",
+						"          RSD_CODE_MASTER_SOLDTO as string,",
+						"          RSD_NAME_MASTER_SOLDTO as string,",
+						"          Z6_CODE_MASTER_SOLDTO as string,",
+						"          Z6_NAME_MASTER_SOLDTO as string,",
+						"          SHIPTOPARTYCODE as integer,",
+						"          SHIPTOPARTYNAME as string,",
+						"          Z6_CODE_MASTER_SHIPTO as string,",
+						"          Z6_NAME_MASTER_SHIPTO as string,",
+						"          UNLOADINGPOINTCODE as string,",
+						"          UNLOADINGPOINTNAME as string,",
+						"          STATE_CODE_UNLOADINGPOINT as string,",
+						"          STATE_NAME_UNLOADINGPOINT as string,",
+						"          CITY_CODE_UNLOADINGPOINT as string,",
+						"          CITY_NAME_UNLOADINGPOINT as string,",
+						"          COUNTY_CODE_UNLOADINGPOINT as string,",
+						"          COUNTY_NAME_UNLOADINGPOINT as string,",
+						"          SALES_TERRITORY_UNLOADINGPOINT as string,",
+						"          TALUKA_CODE_UNLOADINGPOINT as string,",
+						"          TZONE_UNLOADINGPOINT as string,",
+						"          TZONE_NAME_UNLOADINGPOINT as string,",
+						"          LONGITUDE_UNLOADINGPOINT as string,",
+						"          LATITUDE_UNLOADINGPOINT as string,",
+						"          BP_TYPE_UNLOADINGPOINT as string,",
+						"          BP_DESCRIPTION_UNLOADINGPOINT as string,",
+						"          RATE_CODE_UNLOADINGPOINT as string,",
+						"          RATE_CODE_DESC_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GRP1_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GRP1_DESC_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GRP2_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GROUP_UNLOADINGPOINT as string,",
+						"          CUSTOMER_ACCOUNT_GROUP_UNLOADINGPOINT as string,",
+						"          SO_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          SO_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          ASM_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          ASM_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          RSM_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          RSM_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          RSM_EMAIL_MASTER_UNLOADINGPOINT as string,",
+						"          ZSM_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          ZSM_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          ZSM_EMAIL_MASTER_UNLOADINGPOINT as string,",
+						"          RSD_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          RSD_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          Z6_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          Z6_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          KEY_NONKEY_1 as string,",
+						"          KEY_NONKEY_2 as string,",
+						"          KEY_NONKEY_3 as string,",
+						"          REGULAR_CONSIGNMENT as string,",
+						"          STATE_WATERFALL_SD_WO_T_NT as string,",
+						"          STATE_WATERFALL_SD as string,",
+						"          VC_RP_PER_MT as string,",
+						"          VC_RP_VALUE as string,",
+						"          CONTRIBUTION_RP_VALUE as string,",
+						"          A767_FREIGHT_VALUE as string,",
+						"          A767_Z3_ZJ_FREIGHT_VALUE as string,",
+						"          BUSINESS_AREA as string,",
+						"          PROFIT_CENTRE as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 select(mapColumn(",
+						"          SOLDTOPARTYCODE,",
+						"          SOLDTOPARTYNAME,",
+						"          SHIPTOPARTYCODE,",
+						"          SHIPTOPARTYNAME,",
+						"          BP_TYPE_SOLDTO,",
+						"          BP_TYPE_UNLOADINGPOINT,",
+						"          BILLINGDOCUMENT",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> customersink"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/GeoGraphydataflow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "RowInputSourceCSV",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "GeographyParquet",
+								"type": "DatasetReference"
+							},
+							"name": "geographsink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          REPORT_FLAG as string,",
+						"          COMPANY_REGION_CLUBBED as string,",
+						"          COMPANY_REGION_CLUBBED_2 as string,",
+						"          COMPANY_REGION_CLUBBED_3 as string,",
+						"          COMPANY_REGION_CLUBBED_4 as string,",
+						"          SALES_ORGANISATION as string,",
+						"          DIVISIONCODE as string,",
+						"          DISTRIBUTIONCHANNEL as string,",
+						"          SALES_TYPE as string,",
+						"          SALES_TYPE_2 as string,",
+						"          SALES_TYPE_5 as string,",
+						"          BILLINGDOCUMENT as string,",
+						"          SHIPMENTNO as string,",
+						"          DELIVERY_NO as string,",
+						"          SONUMBER as string,",
+						"          ORDERQUANTITY as string,",
+						"          CANCELLEDINVOICENO as string,",
+						"          DOCUMENT_CATEGORY as string,",
+						"          BILLINGTYPE as string,",
+						"          SALES_FLAG as string,",
+						"          QUANTITY_ZERO_FLAG as string,",
+						"          EWAYBILLNO as string,",
+						"          EWAYDATE as string,",
+						"          INVOICEDQUANTITY as string,",
+						"          NETWR_VFKP as string,",
+						"          MRP_RS_BAG as string,",
+						"          GROSS_BILL_PRICE as string,",
+						"          INVOICE_PD as string,",
+						"          MANUAL_PD as string,",
+						"          NET_BILL_PRICE as string,",
+						"          SGST as string,",
+						"          CGST as string,",
+						"          IGST as string,",
+						"          TOTAL_TAX as string,",
+						"          PRIMARY_FREIGHT as string,",
+						"          MANUAL_FREIGHT as string,",
+						"          TOTAL_PRIMARY_FREIGHT as string,",
+						"          PRIMARY_FREIGHT_2 as string,",
+						"          SECONDARY_FREIGHT as string,",
+						"          TOTAL_FREIGHT as string,",
+						"          HANDLING_CHARGE as string,",
+						"          GODOWN_RENT as string,",
+						"          BRANCH_EXPENSES_MANUAL as string,",
+						"          TDC as string,",
+						"          TOTAL_DISCOUNT as string,",
+						"          TOTAL_COMMISION as string,",
+						"          TOTAL_DISCOUNT_COMMISION as string,",
+						"          CLINKER_PERCENTAGE as string,",
+						"          TOTAL_CLINKER_FREIGHT as string,",
+						"          PACKING_CHARGES as string,",
+						"          OTHER_MANUAL_ADJUSTMENT as string,",
+						"          NCR_WITHOUT_SUBSIDY as string,",
+						"          TOTAL_REMISSION as string,",
+						"          FINAL_NCR as string,",
+						"          TOTAL_CASH_REMMISSION as string,",
+						"          NET_BILL_PRICE_WITH_GD_IMPACT as string,",
+						"          PF_DIST as string,",
+						"          SF_DIST as string,",
+						"          ORDER_PLATFORM as string,",
+						"          PONUMBER as string,",
+						"          PO_DATE as string,",
+						"          REPORT_DATE as string,",
+						"          WEEK_NO as string,",
+						"          BILLINGDATE_TIMESTAMP as string,",
+						"          BILLINGDATE as string,",
+						"          SODATE as string,",
+						"          DO_RELEASE_DATE_TIME as string,",
+						"          SCHEDULE_DATE_TIME as string,",
+						"          SO_RELEASE_DATE_TIME as string,",
+						"          DELIVERY_DATE_TIME as string,",
+						"          TRANS_TAGG_DATE_TIME as string,",
+						"          SHIP_DATE_TIME as string,",
+						"          PKGCALL_DATE_TIME as string,",
+						"          YARD_IN_DATE_TIME as string,",
+						"          YARD_OUT_DATE_TIME as string,",
+						"          SECURITY_IN_DATE_TIME as string,",
+						"          TARE_DATE_TIME as string,",
+						"          ACTUAL_LOAD_DATE_TIME as string,",
+						"          GROSS_DATE_TIME as string,",
+						"          BILLING_DATE_TIME as string,",
+						"          SECURITY_OUT_DATE_TIME as string,",
+						"          TAT as string,",
+						"          SO_DO_TIME as string,",
+						"          DO_SHIP_TIME as string,",
+						"          DO_TRANS_TAGG_TIME as string,",
+						"          TRANS_TAGG_SHIP_TIME as string,",
+						"          SHIP_PH_CALL_TIME as string,",
+						"          PH_SEC_CALL_TIME as string,",
+						"          SEC_TARE_CALL_TIME as string,",
+						"          TW_LOAD_TIME as string,",
+						"          LOAD_GW_TIME as string,",
+						"          GW_INV_TIME as string,",
+						"          INV_GO_TIME as string,",
+						"          SLA_DATE_TIME as string,",
+						"          INCOTERMS1 as string,",
+						"          STATE_CODE_TRANSACTION as string,",
+						"          RATE_CODE as string,",
+						"          RATE_CODE_DESC as string,",
+						"          TZONE as string,",
+						"          TZONE_DESC as string,",
+						"          MATERIALNUMBER as string,",
+						"          MATERIAL_DESCRIPTION as string,",
+						"          MATERIAL_SUBTYPE_MKT as string,",
+						"          BAG_TYPE_ACTUAL as string,",
+						"          PRODUCT_SALES_TEAM as string,",
+						"          PRODUCT_MFG_TEAM as string,",
+						"          MATNR_BRAND as string,",
+						"          BLENDED_NONBLENDED as string,",
+						"          BAG_LOOSE as string,",
+						"          MANUFACTURING_PLANT as string,",
+						"          ACTUAL_MFG_PLANT as string,",
+						"          PLANTCODE as string,",
+						"          PLANTDESC as string,",
+						"          PLANT_TYPE_2 as string,",
+						"          PLANT_DEPOT_TYPE as string,",
+						"          PLANT_CODE_CLUBBED as string,",
+						"          PLANT_NAME_CLUBBED as string,",
+						"          PLANT_STATE_CODE as string,",
+						"          PLANT_STATE_NAME as string,",
+						"          PLANT_SUB_STATE as string,",
+						"          DEPODIRECT as string,",
+						"          DEPODIRECT_2 as string,",
+						"          ROUTE as string,",
+						"          ROUTEDESC as string,",
+						"          TRANSPORTERCODE as string,",
+						"          TRANSPORTERNAME as string,",
+						"          DRIVERNAME as string,",
+						"          MOBILENO_DRIVER as string,",
+						"          LORRYORTRUCKNO as string,",
+						"          TRUCKTYPEHU as string,",
+						"          TRUCKTYPEDESCHU as string,",
+						"          SHIPMENTTYPE as string,",
+						"          SHIPPINGTYPE as string,",
+						"          CHARG as string,",
+						"          BATCHSOURCE as string,",
+						"          BATCHNUMBER as string,",
+						"          MODEOFTRANSPORT as string,",
+						"          MEANSOFTRANSPORT_TYPE as string,",
+						"          STOLOC as string,",
+						"          DAMAGE_FLAG as string,",
+						"          DAMAGE_FLAG_2 as string,",
+						"          TRIPID as string,",
+						"          SHIFT as string,",
+						"          SO_CODE_TRANSACTION as string,",
+						"          SO_NAME_TRANSACTION as string,",
+						"          ASM_CODE_TRANSACTION as string,",
+						"          ASM_NAME_TRANSACTION as string,",
+						"          RSM_CODE_TRANSACTION as string,",
+						"          RSM_NAME_TRANSACTION as string,",
+						"          ZSM_CODE_TRANSACTION as string,",
+						"          ZSM_NAME_TRANSACTION as string,",
+						"          RSD_CODE_TRANSACTION as string,",
+						"          RSD_NAME_TRANSACTION as string,",
+						"          Z6_CODE_TRANSACTION as string,",
+						"          Z6_NAME_TRANSACTION as string,",
+						"          SOLDTOPARTYCODE as string,",
+						"          SOLDTOPARTYNAME as string,",
+						"          STATE_CODE_SOLDTO as string,",
+						"          STATE_NAME_SOLDTO as string,",
+						"          CITY_CODE_SOLDTO as string,",
+						"          CITY_NAME_SOLDTO as string,",
+						"          COUNTY_CODE_SOLDTO as string,",
+						"          COUNTY_NAME_SOLDTO as string,",
+						"          SALES_TERRITORY_SOLDTO as string,",
+						"          TALUKA_CODE_SOLDTO as string,",
+						"          TZONE_SOLDTO as string,",
+						"          TZONE_NAME_SOLDTO as string,",
+						"          LONGITUDE_SOLDTO as string,",
+						"          LATITUDE_SOLDTO as string,",
+						"          BP_TYPE_SOLDTO as string,",
+						"          BP_DESCRIPTION_SOLDTO as string,",
+						"          RATE_CODE_SOLDTO as string,",
+						"          RATE_CODE_DESC_SOLDTO as string,",
+						"          CUSTOMER_GRP1_SOLDTO as string,",
+						"          CUSTOMER_GRP1_DESC_SOLDTO as string,",
+						"          CUSTOMER_GRP2_SOLDTO as string,",
+						"          CUSTOMER_GROUP_SOLDTO as string,",
+						"          CUSTOMER_GROUP_GOVT_SOLDTO as string,",
+						"          CUSTOMER_ACCOUNT_GROUP_SOLDTO as string,",
+						"          SO_CODE_MASTER_SOLDTO as string,",
+						"          SO_NAME_MASTER_SOLDTO as string,",
+						"          ASM_CODE_MASTER_SOLDTO as string,",
+						"          ASM_NAME_MASTER_SOLDTO as string,",
+						"          RSM_CODE_MASTER_SOLDTO as string,",
+						"          RSM_NAME_MASTER_SOLDTO as string,",
+						"          ZSM_CODE_MASTER_SOLDTO as string,",
+						"          ZSM_NAME_MASTER_SOLDTO as string,",
+						"          RSD_CODE_MASTER_SOLDTO as string,",
+						"          RSD_NAME_MASTER_SOLDTO as string,",
+						"          Z6_CODE_MASTER_SOLDTO as string,",
+						"          Z6_NAME_MASTER_SOLDTO as string,",
+						"          SHIPTOPARTYCODE as string,",
+						"          SHIPTOPARTYNAME as string,",
+						"          Z6_CODE_MASTER_SHIPTO as string,",
+						"          Z6_NAME_MASTER_SHIPTO as string,",
+						"          UNLOADINGPOINTCODE as string,",
+						"          UNLOADINGPOINTNAME as string,",
+						"          STATE_CODE_UNLOADINGPOINT as string,",
+						"          STATE_NAME_UNLOADINGPOINT as string,",
+						"          CITY_CODE_UNLOADINGPOINT as string,",
+						"          CITY_NAME_UNLOADINGPOINT as string,",
+						"          COUNTY_CODE_UNLOADINGPOINT as string,",
+						"          COUNTY_NAME_UNLOADINGPOINT as string,",
+						"          SALES_TERRITORY_UNLOADINGPOINT as string,",
+						"          TALUKA_CODE_UNLOADINGPOINT as string,",
+						"          TZONE_UNLOADINGPOINT as string,",
+						"          TZONE_NAME_UNLOADINGPOINT as string,",
+						"          LONGITUDE_UNLOADINGPOINT as string,",
+						"          LATITUDE_UNLOADINGPOINT as string,",
+						"          BP_TYPE_UNLOADINGPOINT as string,",
+						"          BP_DESCRIPTION_UNLOADINGPOINT as string,",
+						"          RATE_CODE_UNLOADINGPOINT as string,",
+						"          RATE_CODE_DESC_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GRP1_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GRP1_DESC_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GRP2_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GROUP_UNLOADINGPOINT as string,",
+						"          CUSTOMER_ACCOUNT_GROUP_UNLOADINGPOINT as string,",
+						"          SO_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          SO_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          ASM_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          ASM_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          RSM_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          RSM_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          RSM_EMAIL_MASTER_UNLOADINGPOINT as string,",
+						"          ZSM_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          ZSM_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          ZSM_EMAIL_MASTER_UNLOADINGPOINT as string,",
+						"          RSD_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          RSD_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          Z6_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          Z6_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          KEY_NONKEY_1 as string,",
+						"          KEY_NONKEY_2 as string,",
+						"          KEY_NONKEY_3 as string,",
+						"          REGULAR_CONSIGNMENT as string,",
+						"          STATE_WATERFALL_SD_WO_T_NT as string,",
+						"          STATE_WATERFALL_SD as string,",
+						"          VC_RP_PER_MT as string,",
+						"          VC_RP_VALUE as string,",
+						"          CONTRIBUTION_RP_VALUE as string,",
+						"          A767_FREIGHT_VALUE as string,",
+						"          A767_Z3_ZJ_FREIGHT_VALUE as string,",
+						"          BUSINESS_AREA as string,",
+						"          PROFIT_CENTRE as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 select(mapColumn(",
+						"          COMPANY_REGION_CLUBBED,",
+						"          STATE_CODE_SOLDTO,",
+						"          CITY_CODE_SOLDTO,",
+						"          COUNTY_CODE_SOLDTO,",
+						"          LONGITUDE_SOLDTO,",
+						"          LATITUDE_SOLDTO,",
+						"          STATE_CODE_UNLOADINGPOINT,",
+						"          CITY_CODE_UNLOADINGPOINT,",
+						"          COUNTY_CODE_UNLOADINGPOINT,",
+						"          LONGITUDE_UNLOADINGPOINT,",
+						"          LATITUDE_UNLOADINGPOINT,",
+						"          BILLINGDOCUMENT",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> geographsink"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/GeoGraphydataflow_to_db')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "RowInputSourceCSV",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "SQL_geography_table",
+								"type": "DatasetReference"
+							},
+							"name": "geographsink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          REPORT_FLAG as string,",
+						"          COMPANY_REGION_CLUBBED as string,",
+						"          COMPANY_REGION_CLUBBED_2 as string,",
+						"          COMPANY_REGION_CLUBBED_3 as string,",
+						"          COMPANY_REGION_CLUBBED_4 as string,",
+						"          SALES_ORGANISATION as short,",
+						"          DIVISIONCODE as short,",
+						"          DISTRIBUTIONCHANNEL as short,",
+						"          SALES_TYPE as string,",
+						"          SALES_TYPE_2 as string,",
+						"          SALES_TYPE_5 as string,",
+						"          BILLINGDOCUMENT as long,",
+						"          SHIPMENTNO as long,",
+						"          DELIVERY_NO as long,",
+						"          SONUMBER as long,",
+						"          ORDERQUANTITY as double,",
+						"          CANCELLEDINVOICENO as string,",
+						"          DOCUMENT_CATEGORY as string,",
+						"          BILLINGTYPE as string,",
+						"          SALES_FLAG as boolean,",
+						"          QUANTITY_ZERO_FLAG as boolean,",
+						"          EWAYBILLNO as long,",
+						"          EWAYDATE as integer,",
+						"          INVOICEDQUANTITY as double,",
+						"          NETWR_VFKP as double,",
+						"          MRP_RS_BAG as double,",
+						"          GROSS_BILL_PRICE as double,",
+						"          INVOICE_PD as double,",
+						"          MANUAL_PD as double,",
+						"          NET_BILL_PRICE as double,",
+						"          SGST as double,",
+						"          CGST as double,",
+						"          IGST as double,",
+						"          TOTAL_TAX as double,",
+						"          PRIMARY_FREIGHT as double,",
+						"          MANUAL_FREIGHT as double,",
+						"          TOTAL_PRIMARY_FREIGHT as double,",
+						"          PRIMARY_FREIGHT_2 as double,",
+						"          SECONDARY_FREIGHT as double,",
+						"          TOTAL_FREIGHT as double,",
+						"          HANDLING_CHARGE as double,",
+						"          GODOWN_RENT as double,",
+						"          BRANCH_EXPENSES_MANUAL as double,",
+						"          TDC as double,",
+						"          TOTAL_DISCOUNT as double,",
+						"          TOTAL_COMMISION as double,",
+						"          TOTAL_DISCOUNT_COMMISION as double,",
+						"          CLINKER_PERCENTAGE as double,",
+						"          TOTAL_CLINKER_FREIGHT as double,",
+						"          PACKING_CHARGES as double,",
+						"          OTHER_MANUAL_ADJUSTMENT as double,",
+						"          NCR_WITHOUT_SUBSIDY as double,",
+						"          TOTAL_REMISSION as double,",
+						"          FINAL_NCR as double,",
+						"          TOTAL_CASH_REMMISSION as double,",
+						"          NET_BILL_PRICE_WITH_GD_IMPACT as double,",
+						"          PF_DIST as double,",
+						"          SF_DIST as double,",
+						"          ORDER_PLATFORM as string,",
+						"          PONUMBER as string,",
+						"          PO_DATE as integer,",
+						"          REPORT_DATE as date,",
+						"          WEEK_NO as string,",
+						"          BILLINGDATE_TIMESTAMP as string,",
+						"          BILLINGDATE as date,",
+						"          SODATE as date,",
+						"          DO_RELEASE_DATE_TIME as string,",
+						"          SCHEDULE_DATE_TIME as string,",
+						"          SO_RELEASE_DATE_TIME as string,",
+						"          DELIVERY_DATE_TIME as string,",
+						"          TRANS_TAGG_DATE_TIME as string,",
+						"          SHIP_DATE_TIME as string,",
+						"          PKGCALL_DATE_TIME as string,",
+						"          YARD_IN_DATE_TIME as string,",
+						"          YARD_OUT_DATE_TIME as string,",
+						"          SECURITY_IN_DATE_TIME as string,",
+						"          TARE_DATE_TIME as string,",
+						"          ACTUAL_LOAD_DATE_TIME as string,",
+						"          GROSS_DATE_TIME as string,",
+						"          BILLING_DATE_TIME as string,",
+						"          SECURITY_OUT_DATE_TIME as string,",
+						"          TAT as double,",
+						"          SO_DO_TIME as double,",
+						"          DO_SHIP_TIME as double,",
+						"          DO_TRANS_TAGG_TIME as double,",
+						"          TRANS_TAGG_SHIP_TIME as double,",
+						"          SHIP_PH_CALL_TIME as double,",
+						"          PH_SEC_CALL_TIME as double,",
+						"          SEC_TARE_CALL_TIME as double,",
+						"          TW_LOAD_TIME as double,",
+						"          LOAD_GW_TIME as double,",
+						"          GW_INV_TIME as double,",
+						"          INV_GO_TIME as double,",
+						"          SLA_DATE_TIME as string,",
+						"          INCOTERMS1 as string,",
+						"          STATE_CODE_TRANSACTION as short,",
+						"          RATE_CODE as string,",
+						"          RATE_CODE_DESC as string,",
+						"          TZONE as string,",
+						"          TZONE_DESC as string,",
+						"          MATERIALNUMBER as string,",
+						"          MATERIAL_DESCRIPTION as string,",
+						"          MATERIAL_SUBTYPE_MKT as string,",
+						"          BAG_TYPE_ACTUAL as string,",
+						"          PRODUCT_SALES_TEAM as string,",
+						"          PRODUCT_MFG_TEAM as string,",
+						"          MATNR_BRAND as string,",
+						"          BLENDED_NONBLENDED as string,",
+						"          BAG_LOOSE as string,",
+						"          MANUFACTURING_PLANT as short,",
+						"          ACTUAL_MFG_PLANT as short,",
+						"          PLANTCODE as string,",
+						"          PLANTDESC as string,",
+						"          PLANT_TYPE_2 as string,",
+						"          PLANT_DEPOT_TYPE as string,",
+						"          PLANT_CODE_CLUBBED as string,",
+						"          PLANT_NAME_CLUBBED as string,",
+						"          PLANT_STATE_CODE as short,",
+						"          PLANT_STATE_NAME as string,",
+						"          PLANT_SUB_STATE as string,",
+						"          DEPODIRECT as string,",
+						"          DEPODIRECT_2 as string,",
+						"          ROUTE as string,",
+						"          ROUTEDESC as string,",
+						"          TRANSPORTERCODE as integer,",
+						"          TRANSPORTERNAME as string,",
+						"          DRIVERNAME as string,",
+						"          MOBILENO_DRIVER as long,",
+						"          LORRYORTRUCKNO as string,",
+						"          TRUCKTYPEHU as integer,",
+						"          TRUCKTYPEDESCHU as string,",
+						"          SHIPMENTTYPE as string,",
+						"          SHIPPINGTYPE as string,",
+						"          CHARG as string,",
+						"          BATCHSOURCE as string,",
+						"          BATCHNUMBER as string,",
+						"          MODEOFTRANSPORT as string,",
+						"          MEANSOFTRANSPORT_TYPE as string,",
+						"          STOLOC as string,",
+						"          DAMAGE_FLAG as string,",
+						"          DAMAGE_FLAG_2 as string,",
+						"          TRIPID as string,",
+						"          SHIFT as string,",
+						"          SO_CODE_TRANSACTION as string,",
+						"          SO_NAME_TRANSACTION as string,",
+						"          ASM_CODE_TRANSACTION as string,",
+						"          ASM_NAME_TRANSACTION as string,",
+						"          RSM_CODE_TRANSACTION as string,",
+						"          RSM_NAME_TRANSACTION as string,",
+						"          ZSM_CODE_TRANSACTION as string,",
+						"          ZSM_NAME_TRANSACTION as string,",
+						"          RSD_CODE_TRANSACTION as string,",
+						"          RSD_NAME_TRANSACTION as string,",
+						"          Z6_CODE_TRANSACTION as integer,",
+						"          Z6_NAME_TRANSACTION as string,",
+						"          SOLDTOPARTYCODE as string,",
+						"          SOLDTOPARTYNAME as string,",
+						"          STATE_CODE_SOLDTO as short,",
+						"          STATE_NAME_SOLDTO as string,",
+						"          CITY_CODE_SOLDTO as string,",
+						"          CITY_NAME_SOLDTO as string,",
+						"          COUNTY_CODE_SOLDTO as string,",
+						"          COUNTY_NAME_SOLDTO as string,",
+						"          SALES_TERRITORY_SOLDTO as string,",
+						"          TALUKA_CODE_SOLDTO as string,",
+						"          TZONE_SOLDTO as string,",
+						"          TZONE_NAME_SOLDTO as string,",
+						"          LONGITUDE_SOLDTO as double,",
+						"          LATITUDE_SOLDTO as double,",
+						"          BP_TYPE_SOLDTO as string,",
+						"          BP_DESCRIPTION_SOLDTO as string,",
+						"          RATE_CODE_SOLDTO as string,",
+						"          RATE_CODE_DESC_SOLDTO as string,",
+						"          CUSTOMER_GRP1_SOLDTO as string,",
+						"          CUSTOMER_GRP1_DESC_SOLDTO as string,",
+						"          CUSTOMER_GRP2_SOLDTO as string,",
+						"          CUSTOMER_GROUP_SOLDTO as string,",
+						"          CUSTOMER_GROUP_GOVT_SOLDTO as string,",
+						"          CUSTOMER_ACCOUNT_GROUP_SOLDTO as string,",
+						"          SO_CODE_MASTER_SOLDTO as string,",
+						"          SO_NAME_MASTER_SOLDTO as string,",
+						"          ASM_CODE_MASTER_SOLDTO as string,",
+						"          ASM_NAME_MASTER_SOLDTO as string,",
+						"          RSM_CODE_MASTER_SOLDTO as string,",
+						"          RSM_NAME_MASTER_SOLDTO as string,",
+						"          ZSM_CODE_MASTER_SOLDTO as string,",
+						"          ZSM_NAME_MASTER_SOLDTO as string,",
+						"          RSD_CODE_MASTER_SOLDTO as string,",
+						"          RSD_NAME_MASTER_SOLDTO as string,",
+						"          Z6_CODE_MASTER_SOLDTO as integer,",
+						"          Z6_NAME_MASTER_SOLDTO as string,",
+						"          SHIPTOPARTYCODE as string,",
+						"          SHIPTOPARTYNAME as string,",
+						"          Z6_CODE_MASTER_SHIPTO as integer,",
+						"          Z6_NAME_MASTER_SHIPTO as string,",
+						"          UNLOADINGPOINTCODE as string,",
+						"          UNLOADINGPOINTNAME as string,",
+						"          STATE_CODE_UNLOADINGPOINT as short,",
+						"          STATE_NAME_UNLOADINGPOINT as string,",
+						"          CITY_CODE_UNLOADINGPOINT as string,",
+						"          CITY_NAME_UNLOADINGPOINT as string,",
+						"          COUNTY_CODE_UNLOADINGPOINT as string,",
+						"          COUNTY_NAME_UNLOADINGPOINT as string,",
+						"          SALES_TERRITORY_UNLOADINGPOINT as string,",
+						"          TALUKA_CODE_UNLOADINGPOINT as string,",
+						"          TZONE_UNLOADINGPOINT as string,",
+						"          TZONE_NAME_UNLOADINGPOINT as string,",
+						"          LONGITUDE_UNLOADINGPOINT as double,",
+						"          LATITUDE_UNLOADINGPOINT as double,",
+						"          BP_TYPE_UNLOADINGPOINT as string,",
+						"          BP_DESCRIPTION_UNLOADINGPOINT as string,",
+						"          RATE_CODE_UNLOADINGPOINT as string,",
+						"          RATE_CODE_DESC_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GRP1_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GRP1_DESC_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GRP2_UNLOADINGPOINT as string,",
+						"          CUSTOMER_GROUP_UNLOADINGPOINT as string,",
+						"          CUSTOMER_ACCOUNT_GROUP_UNLOADINGPOINT as string,",
+						"          SO_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          SO_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          ASM_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          ASM_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          RSM_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          RSM_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          RSM_EMAIL_MASTER_UNLOADINGPOINT as string,",
+						"          ZSM_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          ZSM_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          ZSM_EMAIL_MASTER_UNLOADINGPOINT as string,",
+						"          RSD_CODE_MASTER_UNLOADINGPOINT as string,",
+						"          RSD_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          Z6_CODE_MASTER_UNLOADINGPOINT as integer,",
+						"          Z6_NAME_MASTER_UNLOADINGPOINT as string,",
+						"          KEY_NONKEY_1 as string,",
+						"          KEY_NONKEY_2 as string,",
+						"          KEY_NONKEY_3 as string,",
+						"          REGULAR_CONSIGNMENT as string,",
+						"          STATE_WATERFALL_SD_WO_T_NT as string,",
+						"          STATE_WATERFALL_SD as string,",
+						"          VC_RP_PER_MT as double,",
+						"          VC_RP_VALUE as double,",
+						"          CONTRIBUTION_RP_VALUE as double,",
+						"          A767_FREIGHT_VALUE as double,",
+						"          A767_Z3_ZJ_FREIGHT_VALUE as double,",
+						"          BUSINESS_AREA as short,",
+						"          PROFIT_CENTRE as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 select(mapColumn(",
+						"          COMPANY_REGION_CLUBBED,",
+						"          STATE_CODE_SOLDTO,",
+						"          CITY_CODE_SOLDTO,",
+						"          COUNTY_CODE_SOLDTO,",
+						"          LONGITUDE_SOLDTO,",
+						"          LATITUDE_SOLDTO,",
+						"          STATE_CODE_UNLOADINGPOINT,",
+						"          CITY_CODE_UNLOADINGPOINT,",
+						"          COUNTY_CODE_UNLOADINGPOINT,",
+						"          LONGITUDE_UNLOADINGPOINT,",
+						"          LATITUDE_UNLOADINGPOINT,",
+						"          BILLINGDOCUMENT",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> geographsink"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Incremental_Append_logistic_dataflow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "LogisticsParquet",
+								"type": "DatasetReference"
+							},
+							"name": "maindatasource"
+						},
+						{
+							"dataset": {
+								"referenceName": "backend_dataset",
+								"type": "DatasetReference"
+							},
+							"name": "backenddatasource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "LogosticBronzeParquet",
+								"type": "DatasetReference"
+							},
+							"name": "logisticsink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "union1"
+						},
+						{
+							"name": "sort1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          SHIPMENTNO as string,",
+						"          TRANSPORTERCODE as string,",
+						"          TRANSPORTERNAME as string,",
+						"          MODEOFTRANSPORT as string,",
+						"          MEANSOFTRANSPORT_TYPE as string,",
+						"          PRIMARY_FREIGHT as string,",
+						"          SECONDARY_FREIGHT as string,",
+						"          TOTAL_FREIGHT as string,",
+						"          LORRYORTRUCKNO as string,",
+						"          TRUCKTYPEHU as string,",
+						"          TRUCKTYPEDESCHU as string,",
+						"          BILLINGDOCUMENT as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> maindatasource",
+						"source(output(",
+						"          SHIPMENTNO as string,",
+						"          TRANSPORTERCODE as string,",
+						"          TRANSPORTERNAME as string,",
+						"          MODEOFTRANSPORT as string,",
+						"          MEANSOFTRANSPORT_TYPE as string,",
+						"          PRIMARY_FREIGHT as string,",
+						"          SECONDARY_FREIGHT as string,",
+						"          TOTAL_FREIGHT as string,",
+						"          LORRYORTRUCKNO as string,",
+						"          TRUCKTYPEHU as string,",
+						"          TRUCKTYPEDESCHU as string,",
+						"          BILLINGDOCUMENT as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> backenddatasource",
+						"maindatasource, backenddatasource union(byName: true)~> union1",
+						"union1 sort(desc(BILLINGDOCUMENT, true)) ~> sort1",
+						"sort1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     truncate: true,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     partitionBy('hash', 1)) ~> logisticsink"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Incremental_SCDII_UPSERT_logistic_dataflow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "backend_dataset",
+								"type": "DatasetReference"
+							},
+							"name": "backenddatasource"
+						},
+						{
+							"dataset": {
+								"referenceName": "LogisticsParquet",
+								"type": "DatasetReference"
+							},
+							"name": "lookupdestination"
+						},
+						{
+							"dataset": {
+								"referenceName": "LogisticsParquet",
+								"type": "DatasetReference"
+							},
+							"name": "olddatasource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "UpsertRecordsLogisticParquet",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "join1"
+						},
+						{
+							"name": "WatermarkColumn"
+						},
+						{
+							"name": "union1"
+						},
+						{
+							"name": "filter1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "filter2"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          SHIPMENTNO as string,",
+						"          TRANSPORTERCODE as string,",
+						"          TRANSPORTERNAME as string,",
+						"          MODEOFTRANSPORT as string,",
+						"          MEANSOFTRANSPORT_TYPE as string,",
+						"          PRIMARY_FREIGHT as string,",
+						"          SECONDARY_FREIGHT as string,",
+						"          TOTAL_FREIGHT as string,",
+						"          LORRYORTRUCKNO as string,",
+						"          TRUCKTYPEHU as string,",
+						"          TRUCKTYPEDESCHU as string,",
+						"          BILLINGDOCUMENT as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> backenddatasource",
+						"source(output(",
+						"          SHIPMENTNO as string,",
+						"          TRANSPORTERCODE as string,",
+						"          TRANSPORTERNAME as string,",
+						"          MODEOFTRANSPORT as string,",
+						"          MEANSOFTRANSPORT_TYPE as string,",
+						"          PRIMARY_FREIGHT as string,",
+						"          SECONDARY_FREIGHT as string,",
+						"          TOTAL_FREIGHT as string,",
+						"          LORRYORTRUCKNO as string,",
+						"          TRUCKTYPEHU as string,",
+						"          TRUCKTYPEDESCHU as string,",
+						"          BILLINGDOCUMENT as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet',",
+						"     partitionBy('hash', 1)) ~> lookupdestination",
+						"source(output(",
+						"          SHIPMENTNO as string,",
+						"          TRANSPORTERCODE as string,",
+						"          TRANSPORTERNAME as string,",
+						"          MODEOFTRANSPORT as string,",
+						"          MEANSOFTRANSPORT_TYPE as string,",
+						"          PRIMARY_FREIGHT as string,",
+						"          SECONDARY_FREIGHT as string,",
+						"          TOTAL_FREIGHT as string,",
+						"          LORRYORTRUCKNO as string,",
+						"          TRUCKTYPEHU as string,",
+						"          TRUCKTYPEDESCHU as string,",
+						"          BILLINGDOCUMENT as long",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> olddatasource",
+						"lookupdestination, backenddatasource join(lookupdestination@BILLINGDOCUMENT == backenddatasource@BILLINGDOCUMENT,",
+						"     joinType:'outer',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 derive(Watermark = iif(isNull(lookupdestination@BILLINGDOCUMENT), 'New', iif((backenddatasource@TRANSPORTERNAME != lookupdestination@TRANSPORTERNAME),\"Updatedrecords\",\"Unchange\"))) ~> WatermarkColumn",
+						"olddatasource, select1 union(byName: true)~> union1",
+						"WatermarkColumn filter((Watermark == 'New') || (Watermark == 'Updatedrecords')) ~> filter1",
+						"filter1 select(mapColumn(",
+						"          SHIPMENTNO = backenddatasource@SHIPMENTNO,",
+						"          TRANSPORTERCODE = backenddatasource@TRANSPORTERCODE,",
+						"          TRANSPORTERNAME = backenddatasource@TRANSPORTERNAME,",
+						"          MODEOFTRANSPORT = backenddatasource@MODEOFTRANSPORT,",
+						"          MEANSOFTRANSPORT_TYPE = backenddatasource@MEANSOFTRANSPORT_TYPE,",
+						"          PRIMARY_FREIGHT = backenddatasource@PRIMARY_FREIGHT,",
+						"          SECONDARY_FREIGHT = backenddatasource@SECONDARY_FREIGHT,",
+						"          TOTAL_FREIGHT = backenddatasource@TOTAL_FREIGHT,",
+						"          LORRYORTRUCKNO = backenddatasource@LORRYORTRUCKNO,",
+						"          TRUCKTYPEHU = backenddatasource@TRUCKTYPEHU,",
+						"          TRUCKTYPEDESCHU = backenddatasource@TRUCKTYPEDESCHU,",
+						"          BILLINGDOCUMENT = backenddatasource@BILLINGDOCUMENT",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: false) ~> select1",
+						"union1 filter(BILLINGDOCUMENT == 4451300142L || BILLINGDOCUMENT == 4447405568L) ~> filter2",
+						"filter2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     truncate: true,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Logisticsdataflow')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -2501,6 +4125,73 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/newstedJSONdataflow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "ADF_QUESTION"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "nestedJson",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "NestedJson2",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "flatten1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          id as string,",
+						"          type as string,",
+						"          name as string,",
+						"          ppu as double,",
+						"          batters as (batter as (id as string, type as string)[]),",
+						"          topping as (id as string, type as string)[]",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments',",
+						"     singleQuoted: true) ~> source1",
+						"source1 foldDown(unrollMultiple(batters.batter,topping),",
+						"     mapColumn(",
+						"          id,",
+						"          type,",
+						"          name,",
+						"          ppu,",
+						"          batter = batters.batter,",
+						"          topping",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
+						"flatten1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/productdataflow')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -2843,9 +4534,11 @@
 					"elapsedTimeMetric": {}
 				},
 				"annotations": [],
-				"lastPublishTime": "2024-12-10T17:31:35Z"
+				"lastPublishTime": "2025-01-21T10:14:04Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/GeoGraphydataflow_to_db')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Incre_upsert_pipeline')]",
@@ -2890,725 +4583,11 @@
 					"elapsedTimeMetric": {}
 				},
 				"annotations": [],
-				"lastPublishTime": "2025-01-05T17:35:29Z"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/IncremntalAppendpipeline')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Incremental_Append_logistic_dataflow",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "Incremental_Append_logistic_dataflow",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"maindatasource": {},
-									"backenddatasource": {},
-									"logisticsink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"folder": {
-					"name": "IncremntalLoad"
-				},
-				"annotations": [],
-				"lastPublishTime": "2024-12-25T18:54:18Z"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/IngestingDataFromSource')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings",
-									"blockSizeInMB": 4
-								},
-								"formatSettings": {
-									"type": "ParquetWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "RowInputSourceCSV",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "Parquet1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "BILLING_TABLE",
-						"type": "ExecuteDataFlow",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [
-							{
-								"activity": "Deleteting_file",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "BILLING_TABLE",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"bliingdata": {},
-									"billingsink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "TimeTableDataset",
-						"type": "ExecuteDataFlow",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [
-							{
-								"activity": "BILLING_TABLE",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "TimeTableDataset",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"timetablesink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "SalesOrganization_dataflow",
-						"type": "ExecuteDataFlow",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [
-							{
-								"activity": "TimeTableDataset",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "SalesOrganization_dataflow",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SalesOrganization": {},
-									"SalesOrganizationsink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "productdataflow",
-						"type": "ExecuteDataFlow",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [
-							{
-								"activity": "Logisticsdataflow",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "productdataflow",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"productsource": {},
-									"productsink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "Logisticsdataflow",
-						"type": "ExecuteDataFlow",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [
-							{
-								"activity": "SalesOrganization_dataflow",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "Logisticsdataflow",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"logisticsink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "Customerdataflow",
-						"type": "ExecuteDataFlow",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [
-							{
-								"activity": "productdataflow",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "Customerdataflow",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"customersink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "GeoGraphydataflow",
-						"type": "ExecuteDataFlow",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [
-							{
-								"activity": "Customerdataflow",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "GeoGraphydataflow",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"geographsink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "Miscellaneousdataflow",
-						"type": "ExecuteDataFlow",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [
-							{
-								"activity": "GeoGraphydataflow",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "Miscellaneousdataflow",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "Deleteting_file",
-						"type": "Delete",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "deleteting_the_destination",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"enableLogging": true,
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							}
-						}
-					},
-					{
-						"name": "productdataflow_copy1",
-						"type": "ExecuteDataFlow",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "productdataflow",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"productsource": {},
-									"productsink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2024-12-12T11:56:57Z"
+				"lastPublishTime": "2025-01-21T10:14:04Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/TimeTableDataset')]",
-				"[concat(variables('factoryId'), '/dataflows/SalesOrganization_dataflow')]",
-				"[concat(variables('factoryId'), '/dataflows/productdataflow')]",
-				"[concat(variables('factoryId'), '/dataflows/Logisticsdataflow')]",
-				"[concat(variables('factoryId'), '/dataflows/Miscellaneousdataflow')]"
+				"[concat(variables('factoryId'), '/dataflows/Incremental_SCDII_UPSERT_logistic_dataflow')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Logistic_tb_db')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Logisticsdataflow_2DB",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "Logisticsdataflow_2DB",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"logisticsink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2024-12-10T17:31:36Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/Logisticsdataflow_2DB')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/OnPremSQLServerToAzureSQL')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "OnPremSqlServerTable",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "OnPremToAzureBlobCustomer",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2025-01-11T16:21:17Z"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Sales_tb_db')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "SalesOrganization_dataflow_to_db",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "SalesOrganization_dataflow_to_db",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SalesOrganization": {},
-									"SalesOrganizationsink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2024-12-10T17:31:35Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/SalesOrganization_dataflow_to_db')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/upsertlogisticpipeline')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Incremental_UPSERT_logistic_dataflow",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "Incremental_SCDII_UPSERT_logistic_dataflow",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"backenddatasource": {},
-									"lookupdestination": {},
-									"olddatasource": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"folder": {
-					"name": "IncremntalLoad"
-				},
-				"annotations": [],
-				"lastPublishTime": "2025-01-05T17:35:29Z"
-			},
-			"dependsOn": []
 		}
 	]
 }
