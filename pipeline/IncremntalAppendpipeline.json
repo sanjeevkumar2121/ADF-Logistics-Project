@@ -31,7 +31,7 @@
 			"name": "IncremntalLoad"
 		},
 		"annotations": [],
-		"lastPublishTime": "2024-12-25T18:54:18Z"
+		"lastPublishTime": "2025-01-21T10:14:04Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }

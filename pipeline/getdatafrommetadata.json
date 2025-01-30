@@ -146,17 +146,13 @@
 			},
 			"JSON": {
 				"type": "String"
-			},
-			"Exceptionoccur": {
-				"type": "String"
-			},
-			"True": {
-				"type": "String"
 			}
 		},
 		"folder": {
 			"name": "adf_questions_nv"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2025-01-21T10:14:02Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }

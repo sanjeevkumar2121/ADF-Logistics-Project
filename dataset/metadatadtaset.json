@@ -13,7 +13,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "trycatchmetadatafile.csv",
+				"fileName": "metadatafile.csv",
 				"container": "sourcefolder"
 			},
 			"columnDelimiter": ",",
@@ -39,5 +39,6 @@
 				"type": "String"
 			}
 		]
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
 }

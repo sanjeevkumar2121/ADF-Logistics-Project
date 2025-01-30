@@ -92,7 +92,7 @@
 			"name": "For_each_implementation"
 		},
 		"annotations": [],
-		"lastPublishTime": "2025-01-11T16:21:16Z"
+		"lastPublishTime": "2025-01-21T10:14:03Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }
