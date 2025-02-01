@@ -1,0 +1,21 @@
+{
+	"name": "AW_SqlServer_LS",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "17499-Naveen",
+			"database": "firstdb",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "admin",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIwMjQ5ZThlNC1kZDI3LTQ2ODAtYjg5Zi1lMWUyN2VkOThhOWIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "selfhostedonprem",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
