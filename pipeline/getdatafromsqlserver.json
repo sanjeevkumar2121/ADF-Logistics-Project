@@ -1,0 +1,9 @@
+{
+	"name": "getdatafromsqlserver",
+	"properties": {
+		"folder": {
+			"name": "adf_questions_nv"
+		},
+		"annotations": []
+	}
+}

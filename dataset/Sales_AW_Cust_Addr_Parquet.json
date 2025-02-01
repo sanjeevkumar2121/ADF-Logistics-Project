@@ -1,0 +1,21 @@
+{
+	"name": "Sales_AW_Cust_Addr_Parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "BronzeAzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Customer_Address",
+				"folderPath": "Sales AW Project",
+				"fileSystem": "bronzedata"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}

@@ -1,0 +1,16 @@
+{
+	"name": "Sales_AW_Cust_Addr",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AW_SqlServer_LS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "SalesLT",
+			"table": "CustomerAddress"
+		}
+	}
+}
